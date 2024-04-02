@@ -65,7 +65,7 @@ supcon:
   apply: True
   drop_out: 0.1
   n_pos: 9 #2 #9
-  n_neg: 30 #6 #30
+  n_neg: 20 #6 #30
   temperature: 0.1
   hard_neg: False
   weight: 1
