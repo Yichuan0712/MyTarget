@@ -204,6 +204,7 @@ class Encoder(nn.Module):
         super().__init__()
         self.model_type = model_type
         if model_type == 'esm_v2':
+            #### 这里加
             self.model = prepare_esm_model(model_name, configs)
         # self.pooling_layer = nn.AdaptiveAvgPool2d((None, 1))
         self.pooling_layer = nn.AdaptiveAvgPool1d(1)
@@ -290,7 +291,7 @@ class Encoder(nn.Module):
         classification_head = None
         motif_logits = None
         projection_head = None
-        ####
+        #### 这里加if
         features = self.model(input_ids=encoded_sequence['input_ids'],
                               attention_mask=encoded_sequence['attention_mask'])
 
