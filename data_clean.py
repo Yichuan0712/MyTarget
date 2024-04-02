@@ -31,7 +31,7 @@ class LocalizationDataset(Dataset):
             self.n_neg = configs.supcon.n_neg
             self.hard_neg = configs.supcon.hard_neg
             self.full_list = list(self.class_id.keys())
-            print('LocalizationDataset, Train,', self.full_list)
+            print('LocalizationDataset', self.full_list)
     
     @staticmethod
     def count_samples_by_class(n, samples):
@@ -341,6 +341,9 @@ def prepare_dataloaders(configs, valid_batch_number, test_batch_number):
             valid_sample.append(i)
         elif id in test_id:
             test_sample.append(i)
+    print(len(train_sample))
+    print(len(valid_sample))
+    print(len(test_sample))
 
     # train_samples = prepare_samples(exclude=True, fold_num_list=[valid_batch_number, test_batch_number], id2seq_dic=id_to_seq, npz_file=npz_file)
     # valid_samples = prepare_samples(exclude=False, fold_num_list=[valid_batch_number], id2seq_dic=id_to_seq, npz_file=npz_file)
