@@ -23,7 +23,7 @@ train_settings:
   dataloader: "clean" #"batchsample":old sampling,"clean": clean sampling, each batch contain anchors from different classes
   num_epochs: 8000
   shuffle: True
-  device: cuda:1
+  device: cuda #cuda:1
   batch_size: 3 #16
   grad_accumulation: 1
   loss_pos_weight: 35
@@ -35,12 +35,12 @@ train_settings:
 valid_settings:
   do_every: 400
   batch_size: 3
-  device: cuda:1
+  device: cuda #cuda:1
 
 
 predict_settings:
   batch_size: 3
-  device: cuda:1
+  device: cuda #cuda:1
   cutoffs: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
 
 optimizer:
