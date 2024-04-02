@@ -1,6 +1,6 @@
 fix_seed: 0
-checkpoints_every: 16
-result_path: ./results_test
+checkpoints_every: 8000
+result_path: ./results_supcon
 config_path: ./config.yaml
 
 resume:
@@ -12,59 +12,62 @@ encoder:
   composition: esm_v2 # esm_v2, promprot, both
   model_type: esm_v2 # esm_v2, t5
   model_name:  facebook/esm2_t33_650M_UR50D # facebook/esm2_t33_650M_UR50D, facebook/esm2_t30_150M_UR50D, facebook/esm2_t12_35M_UR50D, facebook/esm2_t6_8M_UR50D, Rostlab/prot_t5_base_mt_uniref50
-  max_len: 1024
+  max_len: 600
   num_classes: 8
   prm4prmpro: ppi
-  frag_overlap: 200
+  frag_overlap: 100
 
 PEFT: frozen #lora # FT, PFT, frozen, lora, PromT
 
 train_settings:
-  num_epochs: 20
+  dataloader: "clean" #"batchsample":old sampling,"clean": clean sampling, each batch contain anchors from different classes
+  num_epochs: 8000
   shuffle: True
-  device: cuda
-  batch_size: 16
+  device: cuda:1
+  batch_size: 3 #16
   grad_accumulation: 1
   loss_pos_weight: 35
   dataset: v2 # v2, v3
-  fine_tune_lr: -2 # -1, -2, -3
+  fine_tune_lr: 0 # -1, -2, -3
+  log_every: 100
 
 
 valid_settings:
-  do_every: 1
-  batch_size: 16
-  device: cuda
+  do_every: 400
+  batch_size: 3
+  device: cuda:1
 
 
 predict_settings:
-  batch_size: 16
-  device: cuda
+  batch_size: 3
+  device: cuda:1
   cutoffs: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
 
 optimizer:
-  name: adam
-  lr: 1e-4 #-4
+  name: sgd
+  lr: 1e-6
   weight_decouple: True
-  weight_decay: 1e-3
+  weight_decay: 0.0005
   eps: 1e-16
   beta_1: 0.9
   beta_2: 0.999
   use_8bit_adam: False
   grad_clip_norm: 1
   decay:
-    warmup: 1024
-    min_lr: 1e-5
-    gamma: 0.2
+    warmup: 10
+    min_lr: 0
+    gamma: 1
     num_restarts: 1
+    first_cycle_steps: 1000  #null before
   mode: cosine #skip, cosine
 
 supcon:
   apply: True
-  device: cuda
   drop_out: 0.1
-  n_pos: 9
-  n_neg: 30
+  n_pos: 3 #2 #9
+  n_neg: 20 #6 #30
   temperature: 0.1
-  hard_neg: True
+  hard_neg: False
   weight: 1
-  warm_start: 1024
+  warm_start: 1000
+  apply_supcon_loss: True #if False can still apply supcon sampling method, but no supcon loss!
