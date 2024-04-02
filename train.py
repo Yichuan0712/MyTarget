@@ -133,7 +133,7 @@ def train_loop(tools, configs, warm_starting,train_writer):
         with autocast():
             # Compute prediction and loss
             encoded_seq = tokenize(tools, seq_frag_tuple)
-            print('encoded_seq.input_ids', encoded_seq['input_ids'].shape())
+            print('encoded_seq.input_ids', encoded_seq['input_ids'].shape)
             # exit(0)
             if type(encoded_seq)==dict:
                 for k in encoded_seq.keys():
