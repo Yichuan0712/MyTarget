@@ -26,11 +26,13 @@ class LocalizationDataset(Dataset):
         self.apply_supcon = configs.supcon.apply
         self.mode = mode
         if self.apply_supcon:
-           self.class_id = get_class_id_dict(self.samples)
-           self.n_pos = configs.supcon.n_pos
-           self.n_neg = configs.supcon.n_neg
-           self.hard_neg = configs.supcon.hard_neg
-           self.full_list = list(self.class_id.keys())
+            self.class_id = get_class_id_dict(self.samples)
+            self.n_pos = configs.supcon.n_pos
+            self.n_neg = configs.supcon.n_neg
+            self.hard_neg = configs.supcon.hard_neg
+            self.full_list = list(self.class_id.keys())
+            print(self.full_list)
+            exit(0)
     
     @staticmethod
     def count_samples_by_class(n, samples):
