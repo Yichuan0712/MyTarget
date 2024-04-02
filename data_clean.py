@@ -31,8 +31,7 @@ class LocalizationDataset(Dataset):
             self.n_neg = configs.supcon.n_neg
             self.hard_neg = configs.supcon.hard_neg
             self.full_list = list(self.class_id.keys())
-            print(self.full_list)
-            exit(0)
+            print('LocalizationDataset, Train,', self.full_list)
     
     @staticmethod
     def count_samples_by_class(n, samples):
