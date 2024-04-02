@@ -290,7 +290,7 @@ class Encoder(nn.Module):
         classification_head = None
         motif_logits = None
         projection_head = None
-
+        ####
         features = self.model(input_ids=encoded_sequence['input_ids'],
                               attention_mask=encoded_sequence['attention_mask'])
 
@@ -300,6 +300,9 @@ class Encoder(nn.Module):
         print('last_hidden_state', last_hidden_state.shape)
         emb_pro_list = self.get_pro_emb(id, id_frags_list, seq_frag_tuple, last_hidden_state, self.overlap)
         emb_pro = torch.stack(emb_pro_list, dim=0)  # [sample, dim]
+        ####
+        emb_pro = None
+        last_hidden_state = None
 
         if self.apply_supcon:
             if not warm_starting:
