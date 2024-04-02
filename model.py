@@ -293,8 +293,11 @@ class Encoder(nn.Module):
 
         features = self.model(input_ids=encoded_sequence['input_ids'],
                               attention_mask=encoded_sequence['attention_mask'])
+
+        print('features', features)
         last_hidden_state = remove_s_e_token(features.last_hidden_state,
                                              encoded_sequence['attention_mask'])  # [batch, maxlen-2, dim]
+        print('last_hidden_state', last_hidden_state)
         emb_pro_list = self.get_pro_emb(id, id_frags_list, seq_frag_tuple, last_hidden_state, self.overlap)
         emb_pro = torch.stack(emb_pro_list, dim=0)  # [sample, dim]
 
