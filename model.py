@@ -302,8 +302,9 @@ class Encoder(nn.Module):
         emb_pro_list = self.get_pro_emb(id, id_frags_list, seq_frag_tuple, last_hidden_state, self.overlap)
         emb_pro = torch.stack(emb_pro_list, dim=0)  # [sample, dim]
         ####
-        emb_pro = None
-        last_hidden_state = None
+        # emb_pro = None
+        # last_hidden_state = None
+        print('emb_pro', emb_pro.shape)
 
         if self.apply_supcon:
             if not warm_starting:
