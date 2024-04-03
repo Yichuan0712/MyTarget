@@ -622,7 +622,7 @@ if __name__ == "__main__":
     with open(config_path) as file:
         config_dict = yaml.full_load(file)
 
-    for i in range(1):
+    for i in range(5):
         valid_num = i
         if valid_num == 4:
             test_num = 0
@@ -631,13 +631,6 @@ if __name__ == "__main__":
         main(config_dict, args,valid_num, test_num)
         break
 
-    i=2
-    valid_num = i
-    if valid_num == 4:
-        test_num = 0
-    else:
-        test_num = valid_num+1
-    main(config_dict, args,valid_num, test_num)
 
 
 
