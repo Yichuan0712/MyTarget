@@ -629,7 +629,7 @@ if __name__ == "__main__":
         else:
             test_num = valid_num+1
         main(config_dict, args,valid_num, test_num)
-        break
+        # break
 
 
 
