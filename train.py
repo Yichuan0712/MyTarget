@@ -589,9 +589,9 @@ def main(config_dict, args,valid_batch_number, test_batch_number):
        else:
           model_path = os.path.join(tools['checkpoint_path'], f'best_model.pth')
     
-    # customlog(logfilepath, f"Loading checkpoint from {model_path}\n")
-    # model_checkpoint = torch.load(model_path, map_location='cpu')
-    # tools['net'].load_state_dict(model_checkpoint['model_state_dict'])
+    customlog(logfilepath, f"Loading checkpoint from {model_path}\n")
+    model_checkpoint = torch.load(model_path, map_location='cpu')
+    tools['net'].load_state_dict(model_checkpoint['model_state_dict'])
     customlog(logfilepath, f"Fold {valid_batch_number} test\n-------------------------------\n")
     start_time = time()
     dataloader = tools["test_loader"]
@@ -622,20 +622,20 @@ if __name__ == "__main__":
     with open(config_path) as file:
         config_dict = yaml.full_load(file)
 
-    # for i in range(1):
-    #     valid_num = i
-    #     if valid_num == 4:
-    #         test_num = 0
-    #     else:
-    #         test_num = valid_num+1
-    #     main(config_dict, args,valid_num, test_num)
-    #     break
-    valid_num = 3
-    if valid_num == 4:
-        test_num = 0
-    else:
-        test_num = valid_num + 1
-    main(config_dict, args, valid_num, test_num)
+    for i in range(1):
+        valid_num = i
+        if valid_num == 4:
+            test_num = 0
+        else:
+            test_num = valid_num+1
+        main(config_dict, args,valid_num, test_num)
+        break
+    # valid_num = 3
+    # if valid_num == 4:
+    #     test_num = 0
+    # else:
+    #     test_num = valid_num + 1
+    # main(config_dict, args, valid_num, test_num)
 
 
 
