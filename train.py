@@ -132,10 +132,10 @@ def train_loop(tools, configs, warm_starting,train_writer):
         id_frags_list, seq_frag_tuple, target_frag_pt, type_protein_pt = make_buffer(id_frag_list_tuple, seq_frag_list_tuple, target_frag_nplist_tuple, type_protein_pt_tuple)
         with autocast():
             # Compute prediction and loss
-            print(id_frags_list)
-            print(len(id_frags_list))
+            # print(id_frags_list)
+            # print(len(id_frags_list))
             encoded_seq = tokenize(tools, seq_frag_tuple)
-            print('encoded_seq.input_ids', encoded_seq['input_ids'].shape)
+            # print('encoded_seq.input_ids', encoded_seq['input_ids'].shape)
             # exit(0)
             if type(encoded_seq)==dict:
                 for k in encoded_seq.keys():
