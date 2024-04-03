@@ -304,6 +304,7 @@ class Encoder(nn.Module):
         ####
         # emb_pro = None
         # last_hidden_state = None
+        print('id', len(id))
         print('emb_pro', emb_pro.shape)
 
         if self.apply_supcon:
