@@ -62,7 +62,7 @@ optimizer:
   mode: cosine #skip, cosine
 
 supcon:
-  apply: True
+  apply: False
   drop_out: 0.1
   n_pos: 9 #2 #9
   n_neg: 30 #6 #30
