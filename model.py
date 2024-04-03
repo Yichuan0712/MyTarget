@@ -11,6 +11,13 @@ from transformers import EsmModel
 from utils import customlog, prepare_saving_dir
 from train import make_buffer
 
+file_path = 'protein_embeddings.pt'
+
+# 尝试加载已有数据
+if os.path.exists(file_path):
+    protein_embeddings_dict = torch.load(file_path)
+else:
+    protein_embeddings_dict = {}
 
 class LayerNormNet(nn.Module):
     """
@@ -306,7 +313,9 @@ class Encoder(nn.Module):
         # last_hidden_state = None
         print('id', len(id))
         print('emb_pro', emb_pro.shape)
-
+        for name, emb in zip(id, emb_pro):
+            protein_embeddings_dict[name] = emb  # 新的嵌入向量替换旧的
+        torch.save(protein_embeddings_dict, file_path)
         if self.apply_supcon:
             if not warm_starting:
                 motif_logits = self.ParallelLinearDecoders(last_hidden_state)
