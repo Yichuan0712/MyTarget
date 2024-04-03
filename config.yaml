@@ -24,7 +24,7 @@ train_settings:
   num_epochs: 1000000
   shuffle: True
   device: cuda
-  batch_size: 2 #16
+  batch_size: 16 #16
   grad_accumulation: 1
   loss_pos_weight: 35
   dataset: v2 # v2, v3
@@ -69,5 +69,5 @@ supcon:
   temperature: 0.1
   hard_neg: False
   weight: 1
-  warm_start: 1000000
+  warm_start: 0
   apply_supcon_loss: True #if False can still apply supcon sampling method, but no supcon loss!
