@@ -71,3 +71,4 @@ supcon:
   weight: 1
   warm_start: 100000
   apply_supcon_loss: True #if False can still apply supcon sampling method, but no supcon loss!
+  skip_esm: True

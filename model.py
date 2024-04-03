@@ -227,6 +227,9 @@ class Encoder(nn.Module):
            self.n_pos = configs.supcon.n_pos
            self.n_neg = configs.supcon.n_neg
            self.batch_size = configs.train_settings.batch_size
+           #### 这里加
+           self.skip_esm = configs.supcon.skip_esm
+           self.protein_embeddings = torch.load('5283_esm2_t33_650M_UR50D.pt')
         
         # mini tools for supcon
         curdir_path = os.getcwd()
@@ -299,23 +302,29 @@ class Encoder(nn.Module):
         motif_logits = None
         projection_head = None
         #### 这里加if
-        features = self.model(input_ids=encoded_sequence['input_ids'],
-                              attention_mask=encoded_sequence['attention_mask'])
+        if self.skip_esm:
+            emb_pro_list = []
+            for i in id:
+                emb_pro_list.append(self.protein_embeddings[i])
+            emb_pro = torch.stack(emb_pro_list, dim=0)
+        else:
+            features = self.model(input_ids=encoded_sequence['input_ids'],
+                                  attention_mask=encoded_sequence['attention_mask'])
 
-        # print('features', features)
-        last_hidden_state = remove_s_e_token(features.last_hidden_state,
-                                             encoded_sequence['attention_mask'])  # [batch, maxlen-2, dim]
-        # print('last_hidden_state', last_hidden_state.shape)
-        emb_pro_list = self.get_pro_emb(id, id_frags_list, seq_frag_tuple, last_hidden_state, self.overlap)
-        emb_pro = torch.stack(emb_pro_list, dim=0)  # [sample, dim]
+            # print('features', features)
+            last_hidden_state = remove_s_e_token(features.last_hidden_state,
+                                                 encoded_sequence['attention_mask'])  # [batch, maxlen-2, dim]
+            # print('last_hidden_state', last_hidden_state.shape)
+            emb_pro_list = self.get_pro_emb(id, id_frags_list, seq_frag_tuple, last_hidden_state, self.overlap)
+            emb_pro = torch.stack(emb_pro_list, dim=0)  # [sample, dim]
         ####
         # emb_pro = None
         # last_hidden_state = None
         # print('id', len(id))
         # print('emb_pro', emb_pro.shape)
-        for name, emb in zip(id, emb_pro):
-            protein_embeddings_dict[name] = emb  # 新的嵌入向量替换旧的
-        torch.save(protein_embeddings_dict, file_path)
+        # for name, emb in zip(id, emb_pro):
+        #     protein_embeddings_dict[name] = emb  # 新的嵌入向量替换旧的
+        # torch.save(protein_embeddings_dict, file_path)
         if self.apply_supcon:
             if not warm_starting:
                 motif_logits = self.ParallelLinearDecoders(last_hidden_state)
