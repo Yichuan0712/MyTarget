@@ -33,7 +33,7 @@ train_settings:
 
 
 valid_settings:
-  do_every: 400
+  do_every: 4000000
   batch_size: 3
   device: cuda
 
