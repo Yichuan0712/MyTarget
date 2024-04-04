@@ -24,7 +24,7 @@ train_settings:
   num_epochs: 8000
   shuffle: True
   device: cuda
-  batch_size: 160 #16
+  batch_size: 1600 #16
   grad_accumulation: 1
   loss_pos_weight: 35
   dataset: v2 # v2, v3
@@ -45,7 +45,7 @@ predict_settings:
 
 optimizer:
   name: adam
-  lr: 1e-3
+  lr: 5e-4
   weight_decouple: True
   weight_decay: 0.0005
   eps: 1e-16
