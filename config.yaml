@@ -45,7 +45,7 @@ predict_settings:
 
 optimizer:
   name: sgd
-  lr: 5e-3
+  lr: 1e-3
   weight_decouple: True
   weight_decay: 0.0005
   eps: 1e-16
