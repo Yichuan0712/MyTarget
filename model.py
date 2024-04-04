@@ -211,7 +211,7 @@ class LayerNormNet2(nn.Module):
     From https://github.com/tttianhao/CLEAN
     """
     def __init__(self, configs, hidden_dim=512, out_dim=256):
-        super(LayerNormNet, self).__init__()
+        super(LayerNormNet2, self).__init__()
         self.hidden_dim1 = hidden_dim
         self.out_dim = out_dim
         self.drop_out = configs.supcon.drop_out
