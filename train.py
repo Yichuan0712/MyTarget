@@ -163,29 +163,31 @@ def train_loop(tools, configs, warm_starting, train_writer):
             weighted_supcon_loss = -1
             class_loss = -1
             position_loss = -1
-            if not warm_starting:
-                motif_logits, target_frag = loss_fix(id_frags_list, motif_logits, target_frag_pt, tools)
-                sample_weight_pt = torch.from_numpy(np.array(sample_weight_tuple)).to(tools['train_device']).unsqueeze(
-                    1)
-                class_loss = tools['loss_function'](
-                    motif_logits,
-                    target_frag.to(tools['train_device']))
-                position_loss = torch.mean(tools['loss_function_pro'](classification_head, type_protein_pt.to(
-                    tools['train_device'])) * sample_weight_pt)
-                train_writer.add_scalar('step class_loss', class_loss.item(), global_step=global_step)
-                train_writer.add_scalar('step position_loss', position_loss.item(), global_step=global_step)
-                print(f"{global_step} class_loss:{class_loss.item()}  position_loss:{position_loss.item()}")
-                weighted_loss_sum = class_loss + position_loss
+            # if not warm_starting:
+            #     motif_logits, target_frag = loss_fix(id_frags_list, motif_logits, target_frag_pt, tools)
+            #     sample_weight_pt = torch.from_numpy(np.array(sample_weight_tuple)).to(tools['train_device']).unsqueeze(
+            #         1)
+            #     class_loss = tools['loss_function'](
+            #         motif_logits,
+            #         target_frag.to(tools['train_device']))
+            #     position_loss = torch.mean(tools['loss_function_pro'](classification_head, type_protein_pt.to(
+            #         tools['train_device'])) * sample_weight_pt)
+            #     train_writer.add_scalar('step class_loss', class_loss.item(), global_step=global_step)
+            #     train_writer.add_scalar('step position_loss', position_loss.item(), global_step=global_step)
+            #     print(f"{global_step} class_loss:{class_loss.item()}  position_loss:{position_loss.item()}")
+            #     weighted_loss_sum = class_loss + position_loss
 
             if configs.supcon.apply and configs.supcon.apply_supcon_loss:  # configs.supcon.apply: # and warm_starting: calculate supcon loss no matter whether warm_starting or not.
                 supcon_loss = tools['loss_function_supcon'](
                     projection_head,
                     configs.supcon.temperature,
                     configs.supcon.n_pos)
-                weighted_supcon_loss = configs.supcon.weight * supcon_loss
-                print(f"{global_step} supcon_loss:{weighted_supcon_loss.item()}")
-                train_writer.add_scalar('step supcon_loss', weighted_supcon_loss.item(), global_step=global_step)
-                weighted_loss_sum += weighted_supcon_loss
+                # weighted_supcon_loss = configs.supcon.weight * supcon_loss
+                # print(f"{global_step} supcon_loss:{weighted_supcon_loss.item()}")
+                print(f"{global_step} supcon_loss:{supcon_loss.item()}")
+                # train_writer.add_scalar('step supcon_loss', weighted_supcon_loss.item(), global_step=global_step)
+                train_writer.add_scalar('step supcon_loss', supcon_loss.item(), global_step=global_step)
+                # weighted_loss_sum += weighted_supcon_loss
             if configs.supcon.apply is False and warm_starting:
                 raise ValueError("Check configs.supcon.apply and configs.supcon.warm_start")
 
