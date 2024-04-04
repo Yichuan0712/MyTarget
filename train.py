@@ -67,7 +67,8 @@ def train_loop(tools, configs, warm_starting, train_writer):
     # f1_score.to(tools["train_device"])
     global global_step
     tools["optimizer"].zero_grad()
-    scaler = GradScaler()
+    # 0404改的, 我怀疑scaler有问题
+    # scaler = GradScaler()
     size = len(tools['train_loader'].dataset)
     num_batches = len(tools['train_loader'])
     train_loss = 0
@@ -187,9 +188,12 @@ def train_loop(tools, configs, warm_starting, train_writer):
             train_loss += weighted_loss_sum.item()
 
         # Backpropagation
-        scaler.scale(weighted_loss_sum).backward()
-        scaler.step(tools['optimizer'])
-        scaler.update()
+        # comment 掉三行
+        # scaler.scale(weighted_loss_sum).backward()
+        # scaler.step(tools['optimizer'])
+        # scaler.update()
+        # 加一行
+        weighted_loss_sum.backward()
         tools['scheduler'].step()
         print(f"{global_step} loss:{weighted_loss_sum.item()}\n")
         train_writer.add_scalar('step loss', weighted_loss_sum.item(), global_step=global_step)
