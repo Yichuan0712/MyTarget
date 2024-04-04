@@ -142,7 +142,8 @@ def train_loop(tools, configs, warm_starting, train_writer):
                                                                                      seq_frag_list_tuple,
                                                                                      target_frag_nplist_tuple,
                                                                                      type_protein_pt_tuple)
-        with autocast():
+        # with autocast():
+        if True: # 难道是?
             # Compute prediction and loss
             # encoded_seq = tokenize(tools, seq_frag_tuple)
             # if type(encoded_seq) == dict:
