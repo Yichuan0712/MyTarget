@@ -202,24 +202,24 @@ def train_loop(tools, configs, warm_starting, train_writer):
             supcon_loss.backward()
             tools['optimizer'].step()
             train_loss += supcon_loss.item()
-        print(f"{global_step} loss:{weighted_loss_sum.item()}\n")
-        train_writer.add_scalar('step loss', weighted_loss_sum.item(), global_step=global_step)
-        train_writer.add_scalar('learning_rate', tools['scheduler'].get_lr()[0], global_step=global_step)
-        if global_step % configs.train_settings.log_every == 0:  # 30 before changed into 0
-            loss, current = weighted_loss_sum.item(), (batch + 1) * b_size  # len(id_tuple)
-            if flag_batch_extension:
-                customlog(tools["logfilepath"], f"{global_step} loss: {loss:>7f}  [{current:>5d}/{size:>5d}]  ->  " +
-                          f"[{(batch + 1) * len(id_tuple):>5d}/{size * (1 + configs.supcon.n_pos + configs.supcon.n_neg):>5d}]")
-            else:
-                customlog(tools["logfilepath"], f"{global_step} loss: {loss:>7f}  [{current:>5d}/{size:>5d}]\n")
-            if class_loss != -1:
-                customlog(tools["logfilepath"],
-                          f"{global_step} class loss: {class_loss.item():>7f} position_loss:{position_loss.item():>7f}\n")
-
-            if weighted_supcon_loss != -1:
-                customlog(tools["logfilepath"], f"{global_step} supcon loss: {weighted_supcon_loss.item():>7f}\n")
-
-        global_step += 1
+        # print(f"{global_step} loss:{weighted_loss_sum.item()}\n")
+        # train_writer.add_scalar('step loss', weighted_loss_sum.item(), global_step=global_step)
+        # train_writer.add_scalar('learning_rate', tools['scheduler'].get_lr()[0], global_step=global_step)
+        # if global_step % configs.train_settings.log_every == 0:  # 30 before changed into 0
+        #     loss, current = weighted_loss_sum.item(), (batch + 1) * b_size  # len(id_tuple)
+        #     if flag_batch_extension:
+        #         customlog(tools["logfilepath"], f"{global_step} loss: {loss:>7f}  [{current:>5d}/{size:>5d}]  ->  " +
+        #                   f"[{(batch + 1) * len(id_tuple):>5d}/{size * (1 + configs.supcon.n_pos + configs.supcon.n_neg):>5d}]")
+        #     else:
+        #         customlog(tools["logfilepath"], f"{global_step} loss: {loss:>7f}  [{current:>5d}/{size:>5d}]\n")
+        #     if class_loss != -1:
+        #         customlog(tools["logfilepath"],
+        #                   f"{global_step} class loss: {class_loss.item():>7f} position_loss:{position_loss.item():>7f}\n")
+        #
+        #     if weighted_supcon_loss != -1:
+        #         customlog(tools["logfilepath"], f"{global_step} supcon loss: {weighted_supcon_loss.item():>7f}\n")
+        #
+        # global_step += 1
 
     epoch_loss = train_loss / num_batches
     return epoch_loss
