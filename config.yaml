@@ -21,7 +21,7 @@ PEFT: frozen #lora # FT, PFT, frozen, lora, PromT
 
 train_settings:
   dataloader: "clean" #"batchsample":old sampling,"clean": clean sampling, each batch contain anchors from different classes
-  num_epochs: 1
+  num_epochs: 100000
   shuffle: True
   device: cuda
   batch_size: 16 #16
