@@ -122,6 +122,10 @@ def prepare_optimizer(net, configs, num_train_samples, logfilepath):
                 min_lr=configs.optimizer.decay.min_lr,
                 warmup_steps=configs.optimizer.decay.warmup,
                 gamma=configs.optimizer.decay.gamma)
+    """
+    加的
+    """
+    optimizer = torch.optim.Adam(net.parameters(), lr=5e-4, betas=(0.9, 0.999))
     return optimizer, scheduler
 
 

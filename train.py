@@ -197,7 +197,7 @@ def train_loop(tools, configs, warm_starting, train_writer):
         # 加一行
             supcon_loss.backward()
             tools['optimizer'].step()
-            train_loss += weighted_loss_sum.item()
+            train_loss += supcon_loss.item()
         print(f"{global_step} loss:{weighted_loss_sum.item()}\n")
         train_writer.add_scalar('step loss', weighted_loss_sum.item(), global_step=global_step)
         train_writer.add_scalar('learning_rate', tools['scheduler'].get_lr()[0], global_step=global_step)
