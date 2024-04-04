@@ -230,8 +230,8 @@ class LayerNormNet2(nn.Module):
     def forward(self, x):
         x = self.dropout(self.ln1(self.fc1(x)))
         x = torch.relu(x)
-        #x = self.dropout(self.ln2(self.fc2(x)))
-        #x = torch.relu(x)
+        x = self.dropout(self.ln2(self.fc2(x)))
+        x = torch.relu(x)
         x = self.fc3(x)
         return x
 class Encoder(nn.Module):
