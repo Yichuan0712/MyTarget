@@ -210,14 +210,14 @@ class Encoder(nn.Module):
     def __init__(self, configs, model_name='facebook/esm2_t33_650M_UR50D', model_type='esm_v2'):
         super().__init__()
         self.model_type = model_type
-        if model_type == 'esm_v2':
-            #### 这里加
-            self.model = prepare_esm_model(model_name, configs)
+        # if model_type == 'esm_v2':
+        #     #### 这里加
+        #     self.model = prepare_esm_model(model_name, configs)
         # self.pooling_layer = nn.AdaptiveAvgPool2d((None, 1))
-        self.pooling_layer = nn.AdaptiveAvgPool1d(1)
-        self.ParallelLinearDecoders = ParallelLinearDecoders(input_size=self.model.config.hidden_size, 
-                                                             output_sizes=[1] * configs.encoder.num_classes)
-        self.type_head = nn.Linear(self.model.embeddings.position_embeddings.embedding_dim, configs.encoder.num_classes)
+        # self.pooling_layer = nn.AdaptiveAvgPool1d(1)
+        # self.ParallelLinearDecoders = ParallelLinearDecoders(input_size=self.model.config.hidden_size,
+        #                                                      output_sizes=[1] * configs.encoder.num_classes)
+        # self.type_head = nn.Linear(self.model.embeddings.position_embeddings.embedding_dim, configs.encoder.num_classes)
         self.overlap = configs.encoder.frag_overlap
 
         # SupCon
