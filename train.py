@@ -219,7 +219,7 @@ def train_loop(tools, configs, warm_starting, train_writer):
         #     if weighted_supcon_loss != -1:
         #         customlog(tools["logfilepath"], f"{global_step} supcon loss: {weighted_supcon_loss.item():>7f}\n")
         #
-        # global_step += 1
+        global_step += 1
 
     epoch_loss = train_loss / num_batches
     return epoch_loss

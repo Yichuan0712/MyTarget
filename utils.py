@@ -125,8 +125,10 @@ def prepare_optimizer(net, configs, num_train_samples, logfilepath):
     """
     加的
     """
-    optimizer = torch.optim.Adam(net.projection_head.parameters(), lr=5e-4, betas=(0.9, 0.999))
+    # optimizer = torch.optim.Adam(net.projection_head.parameters(), lr=5e-4, betas=(0.9, 0.999))
+    optimizer = torch.optim.Adam(net.parameters(), lr=5e-4, betas=(0.9, 0.999))
     return optimizer, scheduler
+
 
 
 def load_opt(model, config):
