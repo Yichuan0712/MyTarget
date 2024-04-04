@@ -70,6 +70,7 @@ def train_loop(tools, configs, warm_starting, train_writer):
     # 0404改的, 我怀疑scaler有问题
     # tools["optimizer"].zero_grad()
     # scaler = GradScaler()
+    tools['net'].train().to(tools['train_device'])
     size = len(tools['train_loader'].dataset)
     num_batches = len(tools['train_loader'])
     train_loss = 0
@@ -86,7 +87,7 @@ def train_loop(tools, configs, warm_starting, train_writer):
     for batch, (id_tuple, id_frag_list_tuple, seq_frag_list_tuple, target_frag_nplist_tuple, type_protein_pt_tuple,
                 sample_weight_tuple, pos_neg) in enumerate(tools['train_loader']):
         tools["optimizer"].zero_grad()
-        tools['net'].train().to(tools['train_device'])
+
         b_size = len(id_tuple)
         flag_batch_extension = False
         if (configs.supcon.apply and not warm_starting and pos_neg is not None) or \
