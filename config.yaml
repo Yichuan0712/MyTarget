@@ -69,6 +69,6 @@ supcon:
   temperature: 0.1
   hard_neg: False
   weight: 1
-  warm_start: 1000
+  warm_start: 10000000
   apply_supcon_loss: True #if False can still apply supcon sampling method, but no supcon loss!
   skip_esm: True
