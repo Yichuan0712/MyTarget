@@ -152,17 +152,25 @@ def train_loop(tools, configs, warm_starting, train_writer):
             #     encoded_seq = encoded_seq.to(tools['train_device'])
             encoded_seq = None
 
-            classification_head, motif_logits, projection_head = tools['net'](
-                encoded_seq,
-                id_tuple,
-                id_frags_list,
-                seq_frag_tuple,
-                pos_neg,
-                warm_starting)
-            weighted_loss_sum = 0
-            weighted_supcon_loss = -1
-            class_loss = -1
-            position_loss = -1
+            protein_embeddings = torch.load('5283_esm2_t33_650M_UR50D.pt')
+            emb_pro_list = []
+            for i in id_tuple:
+                emb_pro_list.append(protein_embeddings[i])
+            emb_pro = torch.stack(emb_pro_list, dim=0)
+            emb_pro_ = emb_pro.view((configs.train_settings.batch_size, 1 + configs.supcon.n_pos + configs.supcon.n_neg, -1))
+            projection_head = tools['net'](emb_pro_)
+
+            # classification_head, motif_logits, projection_head = tools['net'](
+            #     encoded_seq,
+            #     id_tuple,
+            #     id_frags_list,
+            #     seq_frag_tuple,
+            #     pos_neg,
+            #     warm_starting)
+            # weighted_loss_sum = 0
+            # weighted_supcon_loss = -1
+            # class_loss = -1
+            # position_loss = -1
             # if not warm_starting:
             #     motif_logits, target_frag = loss_fix(id_frags_list, motif_logits, target_frag_pt, tools)
             #     sample_weight_pt = torch.from_numpy(np.array(sample_weight_tuple)).to(tools['train_device']).unsqueeze(
@@ -519,6 +527,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
     # w=(torch.ones([9,1,1])*5).to(configs.train_settings.device)
     w = torch.tensor(configs.train_settings.loss_pos_weight, dtype=torch.float32).to(configs.train_settings.device)
 
+    from model import LayerNormNet2
     tools = {
         'frag_overlap': configs.encoder.frag_overlap,
         'cutoffs': configs.predict_settings.cutoffs,
@@ -526,7 +535,8 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         'max_len': configs.encoder.max_len,
         'tokenizer': tokenizer,
         'prm4prmpro': configs.encoder.prm4prmpro,
-        'net': encoder,
+        # 'net': encoder,
+        'net': LayerNormNet2(configs),
         'train_loader': dataloaders_dict["train"],
         'valid_loader': dataloaders_dict["valid"],
         'test_loader': dataloaders_dict["test"],

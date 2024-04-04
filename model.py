@@ -206,6 +206,34 @@ def remove_s_e_token(target_tensor, mask_tensor):  # target_tensor [batch, seq+2
     new_tensor=torch.stack(result,axis=0)
     return new_tensor
 
+class LayerNormNet2(nn.Module):
+    """
+    From https://github.com/tttianhao/CLEAN
+    """
+    def __init__(self, configs, hidden_dim=512, out_dim=256):
+        super(LayerNormNet, self).__init__()
+        self.hidden_dim1 = hidden_dim
+        self.out_dim = out_dim
+        self.drop_out = configs.supcon.drop_out
+        self.device = configs.train_settings.device
+        self.dtype = torch.float32
+        feature_dim={"facebook/esm2_t6_8M_UR50D":320,"facebook/esm2_t33_650M_UR50D":1280,"facebook/esm2_t30_150M_UR50D":640,"facebook/esm2_t12_35M_UR50D":480}
+        self.fc1 = nn.Linear(feature_dim[configs.encoder.model_name], hidden_dim, dtype=self.dtype, device=self.device)
+        self.ln1 = nn.LayerNorm(hidden_dim, dtype=self.dtype, device=self.device)
+        self.fc2 = nn.Linear(hidden_dim, hidden_dim,
+                             dtype=self.dtype, device=self.device)
+        self.ln2 = nn.LayerNorm(hidden_dim, dtype=self.dtype, device=self.device)
+        self.fc3 = nn.Linear(hidden_dim, out_dim, dtype=self.dtype, device=self.device)
+        self.dropout = nn.Dropout(p=self.drop_out)
+
+
+    def forward(self, x):
+        x = self.dropout(self.ln1(self.fc1(x)))
+        x = torch.relu(x)
+        #x = self.dropout(self.ln2(self.fc2(x)))
+        #x = torch.relu(x)
+        x = self.fc3(x)
+        return x
 class Encoder(nn.Module):
     def __init__(self, configs, model_name='facebook/esm2_t33_650M_UR50D', model_type='esm_v2'):
         super().__init__()
