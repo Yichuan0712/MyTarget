@@ -209,16 +209,8 @@ def remove_s_e_token(target_tensor, mask_tensor):  # target_tensor [batch, seq+2
 class Encoder(nn.Module):
     def __init__(self, configs, model_name='facebook/esm2_t33_650M_UR50D', model_type='esm_v2'):
         super().__init__()
-        self.model_type = model_type
-        # if model_type == 'esm_v2':
-        #     #### 这里加
-        #     self.model = prepare_esm_model(model_name, configs)
-        # self.pooling_layer = nn.AdaptiveAvgPool2d((None, 1))
-        # self.pooling_layer = nn.AdaptiveAvgPool1d(1)
-        # self.ParallelLinearDecoders = ParallelLinearDecoders(input_size=self.model.config.hidden_size,
-        #                                                      output_sizes=[1] * configs.encoder.num_classes)
-        # self.type_head = nn.Linear(self.model.embeddings.position_embeddings.embedding_dim, configs.encoder.num_classes)
-        self.overlap = configs.encoder.frag_overlap
+        # self.model_type = model_type
+        # self.overlap = configs.encoder.frag_overlap
 
         # SupCon
         self.apply_supcon = configs.supcon.apply
@@ -232,23 +224,16 @@ class Encoder(nn.Module):
            self.protein_embeddings = torch.load('5283_esm2_t33_650M_UR50D.pt')
         
         # mini tools for supcon
-        curdir_path = os.getcwd()
-        tokenizer = prepare_tokenizer(configs, curdir_path)
-        self.tools = {
-        'composition': configs.encoder.composition,
-        'tokenizer': tokenizer,
-        'max_len': configs.encoder.max_len,
-        'train_device': configs.train_settings.device,
-        'prm4prmpro': configs.encoder.prm4prmpro
-        }
-        # self.mhatt = nn.MultiheadAttention(embed_dim=320, num_heads=10, batch_first=True)
-        # self.attheadlist = []
-        # self.headlist = []
-        # for i in range(9):
-            # self.attheadlist.append(nn.MultiheadAttention(embed_dim=320, num_heads=1, batch_first=True))
-            # self.headlist.append(nn.Linear(320, 1))
-        # self.device = device
-        # self.device=configs.train_settings.device
+        # curdir_path = os.getcwd()
+        # tokenizer = prepare_tokenizer(configs, curdir_path)
+        # self.tools = {
+        # 'composition': configs.encoder.composition,
+        # 'tokenizer': tokenizer,
+        # 'max_len': configs.encoder.max_len,
+        # 'train_device': configs.train_settings.device,
+        # 'prm4prmpro': configs.encoder.prm4prmpro
+        # }
+
 
     def get_pro_emb(self, id, id_frags_list, seq_frag_tuple, emb_frags, overlap):
         # print(seq_frag_tuple)
@@ -308,15 +293,7 @@ class Encoder(nn.Module):
                 emb_pro_list.append(self.protein_embeddings[i])
             emb_pro = torch.stack(emb_pro_list, dim=0)
         else:
-            features = self.model(input_ids=encoded_sequence['input_ids'],
-                                  attention_mask=encoded_sequence['attention_mask'])
-
-            # print('features', features)
-            last_hidden_state = remove_s_e_token(features.last_hidden_state,
-                                                 encoded_sequence['attention_mask'])  # [batch, maxlen-2, dim]
-            # print('last_hidden_state', last_hidden_state.shape)
-            emb_pro_list = self.get_pro_emb(id, id_frags_list, seq_frag_tuple, last_hidden_state, self.overlap)
-            emb_pro = torch.stack(emb_pro_list, dim=0)  # [sample, dim]
+            pass
         ####
         # emb_pro = None
         # last_hidden_state = None
@@ -327,13 +304,14 @@ class Encoder(nn.Module):
         # torch.save(protein_embeddings_dict, file_path)
         if self.apply_supcon:
             if not warm_starting:
-                motif_logits = self.ParallelLinearDecoders(last_hidden_state)
-                motif_logits = torch.stack(motif_logits, dim=1).squeeze(-1)  # [batch, num_class, maxlen-2]
-                classification_head = self.type_head(emb_pro)  # [sample, num_class]
-                if pos_neg is not None:
-                    """CASE B, when this if condition is skipped, CASE A"""
-                    emb_pro_ = emb_pro.view((self.batch_size, 1 + self.n_pos + self.n_neg, -1))
-                    projection_head = self.projection_head(emb_pro_)
+                exit(0)
+                # motif_logits = self.ParallelLinearDecoders(last_hidden_state)
+                # motif_logits = torch.stack(motif_logits, dim=1).squeeze(-1)  # [batch, num_class, maxlen-2]
+                # classification_head = self.type_head(emb_pro)  # [sample, num_class]
+                # if pos_neg is not None:
+                #     """CASE B, when this if condition is skipped, CASE A"""
+                #     emb_pro_ = emb_pro.view((self.batch_size, 1 + self.n_pos + self.n_neg, -1))
+                #     projection_head = self.projection_head(emb_pro_)
             else:
                 """CASE C"""
                 """
@@ -342,10 +320,11 @@ class Encoder(nn.Module):
                 emb_pro_ = emb_pro.view((self.batch_size, 1 + self.n_pos + self.n_neg, -1))
                 projection_head = self.projection_head(emb_pro_)
         else:
-            """CASE D"""
-            motif_logits = self.ParallelLinearDecoders(last_hidden_state)
-            motif_logits = torch.stack(motif_logits, dim=1).squeeze(-1)  # [batch, num_class, maxlen-2]
-            classification_head = self.type_head(emb_pro)  # [sample, num_class]
+            # """CASE D"""
+            # motif_logits = self.ParallelLinearDecoders(last_hidden_state)
+            # motif_logits = torch.stack(motif_logits, dim=1).squeeze(-1)  # [batch, num_class, maxlen-2]
+            # classification_head = self.type_head(emb_pro)  # [sample, num_class]
+            exit(0)
         return classification_head, motif_logits, projection_head
 
 class Bothmodels(nn.Module):
