@@ -143,12 +143,13 @@ def train_loop(tools, configs, warm_starting, train_writer):
                                                                                      type_protein_pt_tuple)
         with autocast():
             # Compute prediction and loss
-            encoded_seq = tokenize(tools, seq_frag_tuple)
-            if type(encoded_seq) == dict:
-                for k in encoded_seq.keys():
-                    encoded_seq[k] = encoded_seq[k].to(tools['train_device'])
-            else:
-                encoded_seq = encoded_seq.to(tools['train_device'])
+            # encoded_seq = tokenize(tools, seq_frag_tuple)
+            # if type(encoded_seq) == dict:
+            #     for k in encoded_seq.keys():
+            #         encoded_seq[k] = encoded_seq[k].to(tools['train_device'])
+            # else:
+            #     encoded_seq = encoded_seq.to(tools['train_device'])
+            encoded_seq = None
 
             classification_head, motif_logits, projection_head = tools['net'](
                 encoded_seq,
