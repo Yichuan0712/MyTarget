@@ -44,7 +44,7 @@ predict_settings:
   cutoffs: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
 
 optimizer:
-  name: sgd
+  name: adam
   lr: 1e-3
   weight_decouple: True
   weight_decay: 0.0005
