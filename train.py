@@ -61,10 +61,7 @@ def make_buffer(id_frag_list_tuple, seq_frag_list_tuple, target_frag_nplist_tupl
 
 
 def train_loop(tools, configs, warm_starting, train_writer):
-    # accuracy = torchmetrics.Accuracy(task="multiclass", num_classes=tools['num_classes'], average='macro')
-    # f1_score = torchmetrics.F1Score(num_classes=tools['num_classes'], average='macro', task="multiclass")
-    # accuracy.to(tools['train_device'])
-    # f1_score.to(tools["train_device"])
+
     global global_step
 
     # 0404改的, 我怀疑scaler有问题
@@ -75,14 +72,7 @@ def train_loop(tools, configs, warm_starting, train_writer):
     num_batches = len(tools['train_loader'])
     train_loss = 0
     num_train_samples = len(tools['train_loader'])  # steps per epoch
-    # cs_num=np.zeros(9)
-    # cs_correct=np.zeros(9)
-    # type_num=np.zeros(10)
-    # type_correct=np.zeros(10)
-    # cutoff=0.5
-    # Set the model to training mode - important for batch normalization and dropout layers
-    # Unnecessary in this situation but added for best practices
-    # model.train().cuda()
+
 
     for batch, (id_tuple, id_frag_list_tuple, seq_frag_list_tuple, target_frag_nplist_tuple, type_protein_pt_tuple,
                 sample_weight_tuple, pos_neg) in enumerate(tools['train_loader']):
@@ -144,13 +134,7 @@ def train_loop(tools, configs, warm_starting, train_writer):
                                                                                      type_protein_pt_tuple)
         # with autocast():
         if True: # 难道是?
-            # Compute prediction and loss
-            # encoded_seq = tokenize(tools, seq_frag_tuple)
-            # if type(encoded_seq) == dict:
-            #     for k in encoded_seq.keys():
-            #         encoded_seq[k] = encoded_seq[k].to(tools['train_device'])
-            # else:
-            #     encoded_seq = encoded_seq.to(tools['train_device'])
+
             encoded_seq = None
 
             protein_embeddings = torch.load('5283_esm2_t33_650M_UR50D.pt')
@@ -161,30 +145,6 @@ def train_loop(tools, configs, warm_starting, train_writer):
             emb_pro_ = emb_pro.view((configs.train_settings.batch_size, 1 + configs.supcon.n_pos + configs.supcon.n_neg, -1))
             projection_head = tools['net'](emb_pro_)
 
-            # classification_head, motif_logits, projection_head = tools['net'](
-            #     encoded_seq,
-            #     id_tuple,
-            #     id_frags_list,
-            #     seq_frag_tuple,
-            #     pos_neg,
-            #     warm_starting)
-            # weighted_loss_sum = 0
-            # weighted_supcon_loss = -1
-            # class_loss = -1
-            # position_loss = -1
-            # if not warm_starting:
-            #     motif_logits, target_frag = loss_fix(id_frags_list, motif_logits, target_frag_pt, tools)
-            #     sample_weight_pt = torch.from_numpy(np.array(sample_weight_tuple)).to(tools['train_device']).unsqueeze(
-            #         1)
-            #     class_loss = tools['loss_function'](
-            #         motif_logits,
-            #         target_frag.to(tools['train_device']))
-            #     position_loss = torch.mean(tools['loss_function_pro'](classification_head, type_protein_pt.to(
-            #         tools['train_device'])) * sample_weight_pt)
-            #     train_writer.add_scalar('step class_loss', class_loss.item(), global_step=global_step)
-            #     train_writer.add_scalar('step position_loss', position_loss.item(), global_step=global_step)
-            #     print(f"{global_step} class_loss:{class_loss.item()}  position_loss:{position_loss.item()}")
-            #     weighted_loss_sum = class_loss + position_loss
 
             if configs.supcon.apply and configs.supcon.apply_supcon_loss:  # configs.supcon.apply: # and warm_starting: calculate supcon loss no matter whether warm_starting or not.
                 supcon_loss = tools['loss_function_supcon'](
@@ -200,34 +160,10 @@ def train_loop(tools, configs, warm_starting, train_writer):
             if configs.supcon.apply is False and warm_starting:
                 raise ValueError("Check configs.supcon.apply and configs.supcon.warm_start")
 
-
-
-        # Backpropagation
-        # comment 掉三行
-        # scaler.scale(weighted_loss_sum).backward()
-        # scaler.step(tools['optimizer'])
-        # scaler.update()
-        # 加一行
             supcon_loss.backward()
             tools['optimizer'].step()
             train_loss += supcon_loss.item()
-        # print(f"{global_step} loss:{weighted_loss_sum.item()}\n")
-        # train_writer.add_scalar('step loss', weighted_loss_sum.item(), global_step=global_step)
-        # train_writer.add_scalar('learning_rate', tools['scheduler'].get_lr()[0], global_step=global_step)
-        # if global_step % configs.train_settings.log_every == 0:  # 30 before changed into 0
-        #     loss, current = weighted_loss_sum.item(), (batch + 1) * b_size  # len(id_tuple)
-        #     if flag_batch_extension:
-        #         customlog(tools["logfilepath"], f"{global_step} loss: {loss:>7f}  [{current:>5d}/{size:>5d}]  ->  " +
-        #                   f"[{(batch + 1) * len(id_tuple):>5d}/{size * (1 + configs.supcon.n_pos + configs.supcon.n_neg):>5d}]")
-        #     else:
-        #         customlog(tools["logfilepath"], f"{global_step} loss: {loss:>7f}  [{current:>5d}/{size:>5d}]\n")
-        #     if class_loss != -1:
-        #         customlog(tools["logfilepath"],
-        #                   f"{global_step} class loss: {class_loss.item():>7f} position_loss:{position_loss.item():>7f}\n")
-        #
-        #     if weighted_supcon_loss != -1:
-        #         customlog(tools["logfilepath"], f"{global_step} supcon loss: {weighted_supcon_loss.item():>7f}\n")
-        #
+
         global_step += 1
 
     epoch_loss = train_loss / num_batches
