@@ -55,9 +55,9 @@ class LocalizationDataset(Dataset):
         if self.apply_supcon and self.mode=="train":
             # exit(0)
             anchor_type = self.full_list[idx]
-            print(anchor_type)
-            exit(0)
             anchor = random.choice(self.class_id[anchor_type])
+            print(anchor)
+            exit(0)
             id, id_frag_list, seq_frag_list, target_frag_list, type_protein = self.samples[anchor]
         else:
             id, id_frag_list, seq_frag_list, target_frag_list, type_protein = self.samples[idx]
