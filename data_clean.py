@@ -101,7 +101,8 @@ class LocalizationDataset(Dataset):
         for _ in range(self.n_pos):
             chosen_sample = random.choice(all_pos_samples)
             pos_samples.append(chosen_sample)
-        #     print(chosen_sample[4])
+            print(chosen_sample[4], chosen_sample[0])
+        print('*'*32)
         # exit(0)
         # 此时final_pos_samples包含了你需要的正样本，数量为self.n_pos，可能包含重复
 
