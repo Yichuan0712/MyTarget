@@ -79,16 +79,18 @@ def train_loop(tools, configs, warm_starting, train_writer):
                 sample_weight_tuple, pos_neg) in enumerate(tools['train_loader']):
         tools["optimizer"].zero_grad()
 
+        b_size = len(id_tuple)
+        # flag_batch_extension = False
         if (configs.supcon.apply and not warm_starting and pos_neg is not None) or \
                 (configs.supcon.apply and warm_starting):
             """
-            For two scenarios (CASE B & C, see Encoder::forward()) where the batch needs to be extended,
+            For two scenarios (CASE B & C, see Encoder::forward()) where the batch needs to be extended, 
             extend the 6 tuples with pos_neg
-            0 - id_tuple,
-            1 - id_frag_list_tuple,
-            2 - seq_frag_list_tuple,
-            3 - target_frag_nplist_tuple,
-            4 - type_protein_pt_tuple,
+            0 - id_tuple, 
+            1 - id_frag_list_tuple, 
+            2 - seq_frag_list_tuple, 
+            3 - target_frag_nplist_tuple, 
+            4 - type_protein_pt_tuple, 
             5 - and sample_weight_tuple
             without the extending, each len(tuple) == batch_size
             after extending, len(tuple) == batch_size * (1 + n_pos + n_neg)
@@ -127,6 +129,8 @@ def train_loop(tools, configs, warm_starting, train_writer):
                 sample_weight_tuple += tuple(neg_transformed[j][5])
             # print(len(id_tuple))
 
+        # if True: # 难道是?
+
         encoded_seq = None
 
         protein_embeddings = torch.load('5283_esm2_t33_650M_UR50D.pt')
@@ -143,9 +147,9 @@ def train_loop(tools, configs, warm_starting, train_writer):
             projection_head,
             configs.supcon.temperature,
             configs.supcon.n_pos)
-
         print(f"{global_step} supcon_loss:{supcon_loss.item()}")
         train_writer.add_scalar('step supcon_loss', supcon_loss.item(), global_step=global_step)
+
 
         supcon_loss.backward()
         tools['optimizer'].step()
