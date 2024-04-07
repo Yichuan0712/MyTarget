@@ -130,25 +130,22 @@ class LocalizationDataset(Dataset):
         return pos_samples_with_weight  # pos_samples
 
     def get_neg_samples(self, anchor_idx):
-        filtered_samples = [sample for idx, sample in enumerate(self.samples) if idx != anchor_idx]
+        # filtered_samples = [sample for idx, sample in enumerate(self.samples) if idx != anchor_idx]
         anchor_type_protein = self.samples[anchor_idx][4] #class
         if self.hard_neg:
-            hneg = self.hard_mining(anchor_type_protein) #similiar 
-            neg_samples = [sample for sample in filtered_samples if
-                           np.any(np.logical_and(hneg == 1, sample[4] == 1))]
+            pass
+            # hneg = self.hard_mining(anchor_type_protein) #similiar
+            # all_neg_samples = [sample for sample in self.samples if
+            #                np.any(np.logical_and(hneg == 1, sample[4] == 1))]
         else:
-            neg_samples = [sample for sample in filtered_samples if
+            all_neg_samples = [sample for sample in self.samples if
                            not np.any(np.logical_and(anchor_type_protein == 1, sample[4] == 1))]
-        if len(neg_samples) < self.n_neg:
-            # raise ValueError(f"Not enough negative samples ({hneg}) for {anchor_type_protein} found: {len(neg_samples)}. Required: {self.n_neg}.")
-            # print(f"Not enough negative samples ({hneg}) for {anchor_type_protein} found: {len(neg_samples)}. Required: {self.n_neg}.")
-            # print('The rest of negative samples are randomly selected.')
-            neg_samples_2 = [sample for sample in filtered_samples if
-                           not np.any(np.logical_and(anchor_type_protein == 1, sample[4] == 1))]
-            neg_samples_2 = random.sample(neg_samples_2, self.n_neg-len(neg_samples))
-            neg_samples.extend(neg_samples_2)
-        if len(neg_samples) > self.n_neg:
-            neg_samples = random.sample(neg_samples, self.n_neg)
+        neg_samples = []
+
+        # 直接选择n_pos个正样本，允许重复
+        for _ in range(self.n_pos):
+            chosen_sample = random.choice(all_neg_samples)
+            neg_samples.append(chosen_sample)
 
         neg_samples_with_weight = []
         for sample in neg_samples:
