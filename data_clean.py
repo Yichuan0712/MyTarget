@@ -50,6 +50,8 @@ class LocalizationDataset(Dataset):
            return len(self.samples)
         
     def __getitem__(self, idx):
+        print('full_list', self.full_list)
+        print('idx of __getitem__', idx)
         if self.apply_supcon and self.mode=="train":
             anchor_type = self.full_list[idx]
             anchor = random.choice(self.class_id[anchor_type])
