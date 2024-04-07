@@ -437,7 +437,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         scheduler = optimizer
     customlog(logfilepath, 'preparing optimizer is done\n')
     if args.predict != 1:
-        encoder, start_epoch = load_checkpoints(configs, optimizer, scheduler, logfilepath, encoder)
+        _, start_epoch = load_checkpoints(configs, optimizer, scheduler, logfilepath, encoder)
 
     # w=(torch.ones([9,1,1])*5).to(configs.train_settings.device)
     w = torch.tensor(configs.train_settings.loss_pos_weight, dtype=torch.float32).to(configs.train_settings.device)
