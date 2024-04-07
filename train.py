@@ -60,11 +60,11 @@ def make_buffer(id_frag_list_tuple, seq_frag_list_tuple, target_frag_nplist_tupl
     return id_frags_list, seq_frag_tuple, target_frag_pt, type_protein_pt
 
 
-def train_loop(tools, configs, warm_starting, train_writer, optimizer):
+def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
 
     global global_step
 
-    tools['net'].train()
+    encoder.train()
     train_loss = 0
     # size = len(tools['train_loader'].dataset)
     num_batches = len(tools['train_loader'])
@@ -129,7 +129,7 @@ def train_loop(tools, configs, warm_starting, train_writer, optimizer):
             emb_pro_list.append(protein_embeddings[i])
         emb_pro = torch.stack(emb_pro_list, dim=0)
         emb_pro_ = emb_pro.view((configs.train_settings.batch_size, 1 + configs.supcon.n_pos + configs.supcon.n_neg, -1))
-        projection_head = tools['net'](emb_pro_)
+        projection_head = encoder(emb_pro_)
 
         supcon_loss = tools['loss_function_supcon'](projection_head, configs.supcon.temperature, configs.supcon.n_pos)
         print(f"{global_step} supcon_loss:{supcon_loss.item()}")
@@ -449,7 +449,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         'max_len': configs.encoder.max_len,
         # 'tokenizer': tokenizer,
         'prm4prmpro': configs.encoder.prm4prmpro,
-        'net': encoder,
+        # 'net': encoder,
         # 'net': LayerNormNet2(configs),
         'train_loader': dataloaders_dict["train"],
         'valid_loader': dataloaders_dict["valid"],
@@ -507,7 +507,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
 
             # start_time = time()
 
-            train_loss = train_loop(tools, configs, warm_starting, train_writer, optimizer)
+            train_loss = train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer)
             train_writer.add_scalar('epoch loss', train_loss, global_step=epoch)
 
 
