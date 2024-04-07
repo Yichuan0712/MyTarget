@@ -482,17 +482,17 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         global_step = 0
         for epoch in range(start_epoch, configs.train_settings.num_epochs + 1):
             warm_starting = False
-            # if epoch < configs.supcon.warm_start:
-            #     warm_starting = True
-            #     if epoch == 0:
-            #         print('== Warm Start Began    ==')
-            #         customlog(logfilepath, f"== Warm Start Began ==\n")
-            #
-            # if epoch == configs.supcon.warm_start:
-            #     best_valid_loss = np.inf  # reset best_valid_loss when warmend ends
-            #     warm_starting = False
-            #     print('== Warm Start Finished ==')
-            #     customlog(logfilepath, f"== Warm Start Finished ==\n")
+            if epoch < configs.supcon.warm_start:
+                warm_starting = True
+                if epoch == 0:
+                    print('== Warm Start Began    ==')
+                    customlog(logfilepath, f"== Warm Start Began ==\n")
+
+            if epoch == configs.supcon.warm_start:
+                best_valid_loss = np.inf  # reset best_valid_loss when warmend ends
+                warm_starting = False
+                print('== Warm Start Finished ==')
+                customlog(logfilepath, f"== Warm Start Finished ==\n")
 
             tools['epoch'] = epoch
             if global_step % 100 == 0:
