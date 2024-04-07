@@ -429,7 +429,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
     tokenizer = prepare_tokenizer(configs, curdir_path)
     customlog(logfilepath, "Done initialize tokenizer\n")
     from model import LayerNormNet2
-    encoder = encoder = LayerNormNet2(configs)
+    encoder = LayerNormNet2(configs)
 
     customlog(logfilepath, "Done initialize model\n")
 
