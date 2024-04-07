@@ -432,7 +432,8 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
     encoder = prepare_models(configs, logfilepath, curdir_path)
     customlog(logfilepath, "Done initialize model\n")
 
-    optimizer, _ = prepare_optimizer(encoder, configs, len(dataloaders_dict["train"]), logfilepath)
+    optimizer = torch.optim.Adam(encoder.parameters(), lr=5e-4, betas=(0.9, 0.999))
+    # optimizer, _ = prepare_optimizer(encoder, configs, len(dataloaders_dict["train"]), logfilepath)
     # if configs.optimizer.mode == 'skip':
     #     scheduler = optimizer
     customlog(logfilepath, 'preparing optimizer is done\n')
@@ -511,21 +512,21 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
             train_writer.add_scalar('epoch loss', train_loss, global_step=epoch)
             # end_time = time()
 
-            if epoch % configs.valid_settings.do_every == 0 and epoch != 0:
-                customlog(logfilepath, f'Epoch {epoch}: train loss: {train_loss:>5f}\n')
-                print(f'Epoch {epoch}: train loss: {train_loss:>5f}\n')
-                print(f"Fold {valid_batch_number} Epoch {epoch} validation...\n-------------------------------\n")
-                customlog(logfilepath,
-                          f"Fold {valid_batch_number} Epoch {epoch} validation...\n-------------------------------\n")
-                start_time = time()
-                dataloader = tools["valid_loader"]
-
-                valid_loss = test_loop(tools, dataloader, train_writer,
-                                       valid_writer)  # In test loop, never test supcon loss
-
-                valid_writer.add_scalar('epoch loss', valid_loss, global_step=epoch)
-                customlog(logfilepath, f'Epoch {epoch}: valid loss:{valid_loss:>5f}\n')
-                print(f'Epoch {epoch}: valid loss:{valid_loss:>5f}\n')
+            # if epoch % configs.valid_settings.do_every == 0 and epoch != 0:
+            #     customlog(logfilepath, f'Epoch {epoch}: train loss: {train_loss:>5f}\n')
+            #     print(f'Epoch {epoch}: train loss: {train_loss:>5f}\n')
+            #     print(f"Fold {valid_batch_number} Epoch {epoch} validation...\n-------------------------------\n")
+            #     customlog(logfilepath,
+            #               f"Fold {valid_batch_number} Epoch {epoch} validation...\n-------------------------------\n")
+            #     # start_time = time()
+            #     dataloader = tools["valid_loader"]
+            #
+            #     valid_loss = test_loop(tools, dataloader, train_writer,
+            #                            valid_writer)  # In test loop, never test supcon loss
+            #
+            #     valid_writer.add_scalar('epoch loss', valid_loss, global_step=epoch)
+            #     customlog(logfilepath, f'Epoch {epoch}: valid loss:{valid_loss:>5f}\n')
+            #     print(f'Epoch {epoch}: valid loss:{valid_loss:>5f}\n')
                 # end_time = time()
 
     #             if warm_starting:  # in warm_starting only supcon loss, and train_loss
