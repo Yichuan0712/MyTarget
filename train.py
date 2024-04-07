@@ -461,7 +461,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         'valid_device': configs.valid_settings.device,
         'train_batch_size': configs.train_settings.batch_size,
         'valid_batch_size': configs.valid_settings.batch_size,
-        'optimizer': optimizer,
+        # 'optimizer': optimizer,
         # 'loss_function': torch.nn.CrossEntropyLoss(reduction="none"),
         'loss_function': torch.nn.BCEWithLogitsLoss(pos_weight=w, reduction="mean"),
         # 'loss_function_pro': torch.nn.BCEWithLogitsLoss(reduction="mean"),
