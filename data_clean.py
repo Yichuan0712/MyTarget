@@ -72,7 +72,7 @@ class LocalizationDataset(Dataset):
         # sample_weight = max(weights)
         # target_frags = torch.from_numpy(np.stack(target_frags, axis=0))
 
-        # type_protein = torch.from_numpy(type_protein) #好像没用
+        type_protein = torch.from_numpy(type_protein) #好像没用
         pos_neg = None
         if self.apply_supcon and self.mode=="train":
             # Even when not in warm starting, the following code is still executed, although its results are not used
