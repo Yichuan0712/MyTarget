@@ -68,10 +68,11 @@ def train_loop(tools, configs, warm_starting, train_writer):
     # tools["optimizer"].zero_grad()
     # scaler = GradScaler()
     tools['net'].train().to(tools['train_device'])
+    train_loss = 0
     size = len(tools['train_loader'].dataset)
     num_batches = len(tools['train_loader'])
-    train_loss = 0
-    num_train_samples = len(tools['train_loader'])  # steps per epoch
+
+    # num_train_samples = len(tools['train_loader'])  # steps per epoch
 
 
     for batch, (id_tuple, id_frag_list_tuple, seq_frag_list_tuple, target_frag_nplist_tuple, type_protein_pt_tuple,
@@ -522,11 +523,11 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
                 customlog(logfilepath,
                           f"Fold {valid_batch_number} Epoch {epoch} train...\n-------------------------------\n")
 
-            start_time = time()
+            # start_time = time()
 
             train_loss = train_loop(tools, configs, warm_starting, train_writer)
             train_writer.add_scalar('epoch loss', train_loss, global_step=epoch)
-            end_time = time()
+            # end_time = time()
 
             if epoch % configs.valid_settings.do_every == 0 and epoch != 0:
                 customlog(logfilepath, f'Epoch {epoch}: train loss: {train_loss:>5f}\n')
