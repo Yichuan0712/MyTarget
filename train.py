@@ -129,7 +129,6 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
 
         supcon_loss = tools['loss_function_supcon'](projection_head, configs.supcon.temperature, configs.supcon.n_pos)
         print(f"{global_step} supcon_loss:{supcon_loss.item()}")
-        train_writer.add_scalar('step supcon_loss', supcon_loss.item(), global_step=global_step)
 
         supcon_loss.backward()
         optimizer.step()
@@ -170,9 +169,7 @@ def test_loop(tools, dataloader, train_writer, valid_writer):
                 encoded_seq,
                 id_tuple, id_frags_list, seq_frag_tuple,
                 None, False)  # for test_loop always used None and False!
-            # print("ok2")
-            weighted_loss_sum = 0
-            # if not warm_starting:
+
             motif_logits, target_frag = loss_fix(id_frags_list, motif_logits, target_frag_pt, tools)
             sample_weight_pt = torch.from_numpy(np.array(sample_weight_tuple)).to(tools['valid_device']).unsqueeze(1)
             weighted_loss_sum = tools['loss_function'](motif_logits, target_frag.to(tools['valid_device'])) + \
@@ -188,17 +185,9 @@ def test_loop(tools, dataloader, train_writer, valid_writer):
                 weighted_loss_sum += configs.supcon.weight * supcon_loss
             """
             test_loss += weighted_loss_sum.item()
-            # label = torch.argmax(label_1hot, dim=1)
-            # type_pred = torch.argmax(type_probab, dim=1)
-            # accuracy.update(type_pred.detach(), label.detach().to(tools['valid_device']))
-            # macro_f1_score.update(type_pred.detach(), label.detach().to(tools['valid_device']))
-            # f1_score.update(type_pred.detach(), label.detach().to(tools['valid_device']))
 
         test_loss = test_loss / num_batches
-        # epoch_acc = np.array(accuracy.compute().cpu())
-        # epoch_macro_f1 = macro_f1_score.compute().cpu().item()
-        # epoch_f1 = np.array(f1_score.compute().cpu())
-        # acc_cs = cs_correct / cs_num
+
     return test_loss
 
 
@@ -469,17 +458,15 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
     }
 
     if args.predict != 1:
-        customlog(logfilepath, f'number of train steps per epoch: {len(tools["train_loader"])}\n')
-        customlog(logfilepath, "Start training...\n")
 
         best_valid_loss = np.inf
         global global_step
         global_step = 0
         for epoch in range(start_epoch, configs.train_settings.num_epochs + 1):
-            # print(epoch)
+
             optimizer = torch.optim.Adam(encoder.parameters(), lr=5e-4, betas=(0.9, 0.999))
             warm_starting = False
-            # print(warm_starting)
+
             if epoch < configs.supcon.warm_start:
                 # print('****')
                 # print(epoch)
@@ -491,10 +478,6 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
             tools['epoch'] = epoch
             if global_step % 100 == 0:
                 print(f"Fold {valid_batch_number} Epoch {epoch}\n-------------------------------")
-                customlog(logfilepath,
-                          f"Fold {valid_batch_number} Epoch {epoch} train...\n-------------------------------\n")
-
-            # start_time = time()
 
             train_loss = train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer)
             train_writer.add_scalar('epoch loss', train_loss, global_step=epoch)
