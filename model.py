@@ -385,10 +385,11 @@ class Bothmodels(nn.Module):
     
 def prepare_models(configs, logfilepath, curdir_path):
     if configs.encoder.composition=="esm_v2":
-        encoder = Encoder(model_name=configs.encoder.model_name,
-                      model_type=configs.encoder.model_type,
-                      configs=configs
-                      )
+        # encoder = Encoder(model_name=configs.encoder.model_name,
+        #               model_type=configs.encoder.model_type,
+        #               configs=configs
+        #               )
+        encoder = LayerNormNet2(configs)
     elif configs.encoder.composition=="promprot":
         encoder=CustomPromptModel(configs=configs, pretrain_loc=os.path.join(curdir_path, "PromptProtein", "PromptProtein.pt"), trainable_layers=["layers.32", "emb_layer_norm_after"])
     elif configs.encoder.composition=="both":
