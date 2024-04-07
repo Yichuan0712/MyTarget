@@ -102,7 +102,7 @@ class LocalizationDataset(Dataset):
         for sample in pos_samples:
             labels = np.where(sample[4] == 1)[0]
             weights = [self.class_weights[label] for label in labels]
-            sample_weight = np.max(weights)
+            sample_weight = max(weights)
             # sample_with_weight = list(sample) + [sample_weight]
             pos_samples_with_weight.append(sample_weight)
 
@@ -132,7 +132,7 @@ class LocalizationDataset(Dataset):
         for sample in neg_samples:
             labels = np.where(sample[4] == 1)[0]
             weights = [self.class_weights[label] for label in labels]
-            sample_weight = np.max(weights)
+            sample_weight = max(weights)
             # sample_with_weight = list(sample) + [sample_weight]
             neg_samples_with_weight.append(sample_weight)
             # sample[4] = torch.from_numpy(sample[4])
