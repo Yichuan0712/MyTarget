@@ -135,8 +135,8 @@ class LocalizationDataset(Dataset):
         for _ in range(self.n_neg):
             chosen_sample = random.choice(all_neg_samples)
             neg_samples.append(chosen_sample)
-            # print(chosen_sample[4])
-        # print('*'*32)
+            print(chosen_sample[4], chosen_sample[0])
+        print('*' * 32)
         # exit(0)
 
         neg_samples_with_weight = []
