@@ -71,6 +71,8 @@ class LocalizationDataset(Dataset):
 
         # sample_weight = max(weights)
         # target_frags = torch.from_numpy(np.stack(target_frags, axis=0))
+        print(type_protein)
+        exit(0)
         type_protein = torch.from_numpy(type_protein)
         pos_neg = None
         if self.apply_supcon and self.mode=="train":
@@ -104,7 +106,7 @@ class LocalizationDataset(Dataset):
             sample_weight = np.max(weights)
             # sample_with_weight = list(sample) + [sample_weight]
             pos_samples_with_weight.append(sample_weight)
-            sample[4] = torch.from_numpy(sample[4])
+            # sample[4] = torch.from_numpy(sample[4])
 
         return pos_samples_with_weight  # pos_samples
 
@@ -133,7 +135,7 @@ class LocalizationDataset(Dataset):
             sample_weight = np.max(weights)
             # sample_with_weight = list(sample) + [sample_weight]
             neg_samples_with_weight.append(sample_weight)
-            sample[4] = torch.from_numpy(sample[4])
+            # sample[4] = torch.from_numpy(sample[4])
 
         return neg_samples_with_weight  # neg_samples
 
