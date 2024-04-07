@@ -483,8 +483,10 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         for epoch in range(start_epoch, configs.train_settings.num_epochs + 1):
             warm_starting = False
             print(warm_starting)
-            exit(0)
             if epoch < configs.supcon.warm_start:
+                print('****')
+                print(epoch)
+                exit(0)
                 warm_starting = True
                 if epoch == 0:
                     print('== Warm Start Began    ==')
