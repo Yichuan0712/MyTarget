@@ -64,10 +64,7 @@ def train_loop(tools, configs, warm_starting, train_writer, optimizer):
 
     global global_step
 
-    # 0404改的, 我怀疑scaler有问题
-    # tools["optimizer"].zero_grad()
-    # scaler = GradScaler()
-    tools['net'].train().to(tools['train_device'])
+    tools['net'].train()
     train_loss = 0
     # size = len(tools['train_loader'].dataset)
     num_batches = len(tools['train_loader'])
