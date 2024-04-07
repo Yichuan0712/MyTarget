@@ -60,7 +60,7 @@ def make_buffer(id_frag_list_tuple, seq_frag_list_tuple, target_frag_nplist_tupl
     return id_frags_list, seq_frag_tuple, target_frag_pt, type_protein_pt
 
 
-def train_loop(tools, configs, warm_starting, train_writer):
+def train_loop(tools, configs, warm_starting, train_writer, optimizer):
 
     global global_step
 
@@ -77,7 +77,7 @@ def train_loop(tools, configs, warm_starting, train_writer):
 
     for batch, (id_tuple, id_frag_list_tuple, seq_frag_list_tuple, target_frag_nplist_tuple, type_protein_pt_tuple,
                 sample_weight_tuple, pos_neg) in enumerate(tools['train_loader']):
-        tools["optimizer"].zero_grad()
+        optimizer.zero_grad()
         b_size = len(id_tuple)
         if (configs.supcon.apply and not warm_starting and pos_neg is not None) or \
                 (configs.supcon.apply and warm_starting):
@@ -139,7 +139,7 @@ def train_loop(tools, configs, warm_starting, train_writer):
         train_writer.add_scalar('step supcon_loss', supcon_loss.item(), global_step=global_step)
 
         supcon_loss.backward()
-        tools['optimizer'].step()
+        optimizer.step()
         train_loss += supcon_loss.item()
 
         global_step += 1
@@ -433,7 +433,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
 
     customlog(logfilepath, "Done initialize model\n")
 
-    optimizer = torch.optim.Adam(encoder.parameters(), lr=5e-4, betas=(0.9, 0.999))
+
     # optimizer, _ = prepare_optimizer(encoder, configs, len(dataloaders_dict["train"]), logfilepath)
     # if configs.optimizer.mode == 'skip':
     #     scheduler = optimizer
@@ -484,6 +484,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         global_step = 0
         for epoch in range(start_epoch, configs.train_settings.num_epochs + 1):
             # print(epoch)
+            optimizer = torch.optim.Adam(encoder.parameters(), lr=5e-4, betas=(0.9, 0.999))
             warm_starting = False
             # print(warm_starting)
             if epoch < configs.supcon.warm_start:
@@ -509,7 +510,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
 
             # start_time = time()
 
-            train_loss = train_loop(tools, configs, warm_starting, train_writer)
+            train_loss = train_loop(tools, configs, warm_starting, train_writer, optimizer)
             train_writer.add_scalar('epoch loss', train_loss, global_step=epoch)
             # end_time = time()
 
