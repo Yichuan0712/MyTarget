@@ -69,7 +69,7 @@ def train_loop(tools, configs, warm_starting, train_writer):
     # scaler = GradScaler()
     tools['net'].train().to(tools['train_device'])
     train_loss = 0
-    size = len(tools['train_loader'].dataset)
+    # size = len(tools['train_loader'].dataset)
     num_batches = len(tools['train_loader'])
 
     # num_train_samples = len(tools['train_loader'])  # steps per epoch
@@ -78,9 +78,7 @@ def train_loop(tools, configs, warm_starting, train_writer):
     for batch, (id_tuple, id_frag_list_tuple, seq_frag_list_tuple, target_frag_nplist_tuple, type_protein_pt_tuple,
                 sample_weight_tuple, pos_neg) in enumerate(tools['train_loader']):
         tools["optimizer"].zero_grad()
-
         b_size = len(id_tuple)
-        # flag_batch_extension = False
         if (configs.supcon.apply and not warm_starting and pos_neg is not None) or \
                 (configs.supcon.apply and warm_starting):
             """
@@ -128,11 +126,6 @@ def train_loop(tools, configs, warm_starting, train_writer):
                 type_protein_pt_tuple += tuple(torch.from_numpy(arr) for arr in neg_transformed[j][4])
                 sample_weight_tuple += tuple(neg_transformed[j][5])
             # print(len(id_tuple))
-
-        # if True: # 难道是?
-
-        encoded_seq = None
-
         protein_embeddings = torch.load('5283_esm2_t33_650M_UR50D.pt')
         emb_pro_list = []
         for i in id_tuple:
@@ -141,15 +134,9 @@ def train_loop(tools, configs, warm_starting, train_writer):
         emb_pro_ = emb_pro.view((configs.train_settings.batch_size, 1 + configs.supcon.n_pos + configs.supcon.n_neg, -1))
         projection_head = tools['net'](emb_pro_)
 
-
-        # if configs.supcon.apply and configs.supcon.apply_supcon_loss:  # configs.supcon.apply: # and warm_starting: calculate supcon loss no matter whether warm_starting or not.
-        supcon_loss = tools['loss_function_supcon'](
-            projection_head,
-            configs.supcon.temperature,
-            configs.supcon.n_pos)
+        supcon_loss = tools['loss_function_supcon'](projection_head, configs.supcon.temperature, configs.supcon.n_pos)
         print(f"{global_step} supcon_loss:{supcon_loss.item()}")
         train_writer.add_scalar('step supcon_loss', supcon_loss.item(), global_step=global_step)
-
 
         supcon_loss.backward()
         tools['optimizer'].step()
