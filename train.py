@@ -66,11 +66,7 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
 
     encoder.train()
     train_loss = 0
-    # size = len(tools['train_loader'].dataset)
     num_batches = len(tools['train_loader'])
-
-    # num_train_samples = len(tools['train_loader'])  # steps per epoch
-
 
     for batch, (id_tuple, id_frag_list_tuple, seq_frag_list_tuple, target_frag_nplist_tuple, type_protein_pt_tuple,
                 sample_weight_tuple, pos_neg) in enumerate(tools['train_loader']):
