@@ -512,63 +512,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
 
             train_loss = train_loop(tools, configs, warm_starting, train_writer, optimizer)
             train_writer.add_scalar('epoch loss', train_loss, global_step=epoch)
-            # end_time = time()
 
-            # if epoch % configs.valid_settings.do_every == 0 and epoch != 0:
-            #     customlog(logfilepath, f'Epoch {epoch}: train loss: {train_loss:>5f}\n')
-            #     print(f'Epoch {epoch}: train loss: {train_loss:>5f}\n')
-            #     print(f"Fold {valid_batch_number} Epoch {epoch} validation...\n-------------------------------\n")
-            #     customlog(logfilepath,
-            #               f"Fold {valid_batch_number} Epoch {epoch} validation...\n-------------------------------\n")
-            #     # start_time = time()
-            #     dataloader = tools["valid_loader"]
-            #
-            #     valid_loss = test_loop(tools, dataloader, train_writer,
-            #                            valid_writer)  # In test loop, never test supcon loss
-            #
-            #     valid_writer.add_scalar('epoch loss', valid_loss, global_step=epoch)
-            #     customlog(logfilepath, f'Epoch {epoch}: valid loss:{valid_loss:>5f}\n')
-            #     print(f'Epoch {epoch}: valid loss:{valid_loss:>5f}\n')
-                # end_time = time()
-
-    #             if warm_starting:  # in warm_starting only supcon loss, and train_loss
-    #                 if train_loss < best_valid_loss:
-    #                     customlog(logfilepath,
-    #                               f"Epoch {epoch}: train loss {train_loss} smaller than best loss {best_valid_loss}\n-------------------------------\n")
-    #                     best_valid_loss = train_loss
-    #                     model_path = os.path.join(tools['checkpoint_path'], f'best_model.pth')
-    #                     customlog(logfilepath,
-    #                               f"Epoch {epoch}: A better checkpoint is saved into {model_path} \n-------------------------------\n")
-    #                     save_checkpoint(epoch, model_path, tools)
-    #             else:
-    #                 if valid_loss < best_valid_loss:
-    #                     customlog(logfilepath,
-    #                               f"Epoch {epoch}: valid loss {valid_loss} smaller than best loss {best_valid_loss}\n-------------------------------\n")
-    #                     best_valid_loss = valid_loss
-    #                     model_path = os.path.join(tools['checkpoint_path'], f'best_model.pth')
-    #                     customlog(logfilepath,
-    #                               f"Epoch {epoch}: A better checkpoint is saved into {model_path} \n-------------------------------\n")
-    #                     save_checkpoint(epoch, model_path, tools)
-    #
-    # if args.predict == 1:
-    #     if os.path.exists(configs.resume.resume_path):
-    #         model_path = configs.resume.resume_path
-    #     else:
-    #         model_path = os.path.join(tools['checkpoint_path'], f'best_model.pth')
-
-    # # customlog(logfilepath, f"Loading checkpoint from {model_path}\n")
-    # # model_checkpoint = torch.load(model_path, map_location='cpu')
-    # # tools['net'].load_state_dict(model_checkpoint['model_state_dict'])
-    # # customlog(logfilepath, f"Fold {valid_batch_number} test\n-------------------------------\n")
-    # # start_time = time()
-    # # dataloader = tools["test_loader"]
-    # # evaluate_protein(dataloader, tools)
-    # train_writer.close()
-    # valid_writer.close()
-    # end_time = time()
-    #
-    # del tools, encoder, dataloaders_dict, optimizer
-    # torch.cuda.empty_cache()
 
 
 if __name__ == "__main__":

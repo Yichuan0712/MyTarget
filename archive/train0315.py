@@ -93,22 +93,13 @@ def train_loop(tools, configs, warm_starting):
                                  pos_neg, 
                                  warm_starting)
             weighted_loss_sum = 0
-            if not warm_starting:
-                motif_logits, target_frag = loss_fix(id_frags_list, motif_logits, target_frag_pt, tools)
-                sample_weight_pt = torch.from_numpy(np.array(sample_weight_tuple)).to(tools['train_device']).unsqueeze(1)
-                weighted_loss_sum = tools['loss_function'](
-                                motif_logits, 
-                                target_frag.to(tools['train_device']))+\
-                    torch.mean(tools['loss_function_pro'](classification_head, type_protein_pt.to(tools['train_device'])) * sample_weight_pt)
+
             if configs.supcon.apply and warm_starting:
                 supcon_loss = tools['loss_function_supcon'](
                                 projection_head,
                                 configs.supcon.temperature,
                                 configs.supcon.n_pos)
                 weighted_loss_sum += configs.supcon.weight * supcon_loss
-            if configs.supcon.apply is False and warm_starting:
-                raise ValueError("Check configs.supcon.apply and configs.supcon.warm_start")
-
             train_loss += weighted_loss_sum.item()
 
         # Backpropagation
