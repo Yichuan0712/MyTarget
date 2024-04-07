@@ -124,7 +124,7 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
         for i in id_tuple:
             emb_pro_list.append(protein_embeddings[i])
         emb_pro = torch.stack(emb_pro_list, dim=0)
-        emb_pro_ = emb_pro.view((configs.train_settings.batch_size, 1 + configs.supcon.n_neg + configs.supcon.n_pos, -1))
+        emb_pro_ = emb_pro.view((configs.train_settings.batch_size, 1 + configs.supcon.n_pos + configs.supcon.n_neg, -1))
         projection_head = encoder(emb_pro_)
 
         supcon_loss = tools['loss_function_supcon'](projection_head, configs.supcon.temperature, configs.supcon.n_pos)
