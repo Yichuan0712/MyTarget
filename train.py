@@ -428,8 +428,9 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
     print(f'number of test data: {len(dataloaders_dict["test"])}\n')
     tokenizer = prepare_tokenizer(configs, curdir_path)
     customlog(logfilepath, "Done initialize tokenizer\n")
+    from model import LayerNormNet2
+    encoder = encoder = LayerNormNet2(configs)
 
-    encoder = prepare_models(configs, logfilepath, curdir_path)
     customlog(logfilepath, "Done initialize model\n")
 
     optimizer = torch.optim.Adam(encoder.parameters(), lr=5e-4, betas=(0.9, 0.999))
