@@ -142,8 +142,8 @@ class LocalizationDataset(Dataset):
                            not np.any(np.logical_and(anchor_type_protein == 1, sample[4] == 1))]
         neg_samples = []
 
-        # 直接选择n_pos个正样本，允许重复
-        for _ in range(self.n_pos):
+        # 直接选择n_neg个样本，允许重复
+        for _ in range(self.n_neg):
             chosen_sample = random.choice(all_neg_samples)
             neg_samples.append(chosen_sample)
 
