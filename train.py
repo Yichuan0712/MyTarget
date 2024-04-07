@@ -79,91 +79,77 @@ def train_loop(tools, configs, warm_starting, train_writer):
                 sample_weight_tuple, pos_neg) in enumerate(tools['train_loader']):
         tools["optimizer"].zero_grad()
 
-        b_size = len(id_tuple)
-        flag_batch_extension = False
-        if (configs.supcon.apply and not warm_starting and pos_neg is not None) or \
-                (configs.supcon.apply and warm_starting):
-            """
-            For two scenarios (CASE B & C, see Encoder::forward()) where the batch needs to be extended, 
-            extend the 6 tuples with pos_neg
-            0 - id_tuple, 
-            1 - id_frag_list_tuple, 
-            2 - seq_frag_list_tuple, 
-            3 - target_frag_nplist_tuple, 
-            4 - type_protein_pt_tuple, 
-            5 - and sample_weight_tuple
-            without the extending, each len(tuple) == batch_size
-            after extending, len(tuple) == batch_size * (1 + n_pos + n_neg)
-            """
-            # print("len of pos_neg = "+str(len(pos_neg)))
-            flag_batch_extension = True
-            pos_transformed = [[[] for _ in range(6)] for _ in range(configs.supcon.n_pos)]
-            neg_transformed = [[[] for _ in range(6)] for _ in range(configs.supcon.n_neg)]
-            for i in range(b_size):
-                # print("pos_neg pos")
-                # print(len(pos_neg[i][0]))
-                for j in range(configs.supcon.n_pos):
-                    for k in range(6):
-                        pos_transformed[j][k].append(pos_neg[i][0][j][k])
-            # print(len(id_tuple))
-            for j in range(configs.supcon.n_pos):
-                id_tuple += tuple(pos_transformed[j][0])
-                id_frag_list_tuple += tuple(pos_transformed[j][1])
-                seq_frag_list_tuple += tuple(pos_transformed[j][2])
-                target_frag_nplist_tuple += tuple(pos_transformed[j][3])
-                type_protein_pt_tuple += tuple(torch.from_numpy(arr) for arr in pos_transformed[j][4])
-                sample_weight_tuple += tuple(pos_transformed[j][5])
-            # print(len(id_tuple))
-            for i in range(b_size):
-                # print("pos_neg neg")
-                # print(len(pos_neg[i][1]))
-                for j in range(configs.supcon.n_neg):
-                    for k in range(6):
-                        neg_transformed[j][k].append(pos_neg[i][1][j][k])
-            for j in range(configs.supcon.n_neg):
-                id_tuple += tuple(neg_transformed[j][0])
-                id_frag_list_tuple += tuple(neg_transformed[j][1])
-                seq_frag_list_tuple += tuple(neg_transformed[j][2])
-                target_frag_nplist_tuple += tuple(neg_transformed[j][3])
-                type_protein_pt_tuple += tuple(torch.from_numpy(arr) for arr in neg_transformed[j][4])
-                sample_weight_tuple += tuple(neg_transformed[j][5])
-            # print(len(id_tuple))
+        # if (configs.supcon.apply and not warm_starting and pos_neg is not None) or \
+        #         (configs.supcon.apply and warm_starting):
+        #     """
+        #     For two scenarios (CASE B & C, see Encoder::forward()) where the batch needs to be extended,
+        #     extend the 6 tuples with pos_neg
+        #     0 - id_tuple,
+        #     1 - id_frag_list_tuple,
+        #     2 - seq_frag_list_tuple,
+        #     3 - target_frag_nplist_tuple,
+        #     4 - type_protein_pt_tuple,
+        #     5 - and sample_weight_tuple
+        #     without the extending, each len(tuple) == batch_size
+        #     after extending, len(tuple) == batch_size * (1 + n_pos + n_neg)
+        #     """
+        #     # print("len of pos_neg = "+str(len(pos_neg)))
+        #     flag_batch_extension = True
+        #     pos_transformed = [[[] for _ in range(6)] for _ in range(configs.supcon.n_pos)]
+        #     neg_transformed = [[[] for _ in range(6)] for _ in range(configs.supcon.n_neg)]
+        #     for i in range(b_size):
+        #         # print("pos_neg pos")
+        #         # print(len(pos_neg[i][0]))
+        #         for j in range(configs.supcon.n_pos):
+        #             for k in range(6):
+        #                 pos_transformed[j][k].append(pos_neg[i][0][j][k])
+        #     # print(len(id_tuple))
+        #     for j in range(configs.supcon.n_pos):
+        #         id_tuple += tuple(pos_transformed[j][0])
+        #         id_frag_list_tuple += tuple(pos_transformed[j][1])
+        #         seq_frag_list_tuple += tuple(pos_transformed[j][2])
+        #         target_frag_nplist_tuple += tuple(pos_transformed[j][3])
+        #         type_protein_pt_tuple += tuple(torch.from_numpy(arr) for arr in pos_transformed[j][4])
+        #         sample_weight_tuple += tuple(pos_transformed[j][5])
+        #     # print(len(id_tuple))
+        #     for i in range(b_size):
+        #         # print("pos_neg neg")
+        #         # print(len(pos_neg[i][1]))
+        #         for j in range(configs.supcon.n_neg):
+        #             for k in range(6):
+        #                 neg_transformed[j][k].append(pos_neg[i][1][j][k])
+        #     for j in range(configs.supcon.n_neg):
+        #         id_tuple += tuple(neg_transformed[j][0])
+        #         id_frag_list_tuple += tuple(neg_transformed[j][1])
+        #         seq_frag_list_tuple += tuple(neg_transformed[j][2])
+        #         target_frag_nplist_tuple += tuple(neg_transformed[j][3])
+        #         type_protein_pt_tuple += tuple(torch.from_numpy(arr) for arr in neg_transformed[j][4])
+        #         sample_weight_tuple += tuple(neg_transformed[j][5])
+        #     # print(len(id_tuple))
 
-        id_frags_list, seq_frag_tuple, target_frag_pt, type_protein_pt = make_buffer(id_frag_list_tuple,
-                                                                                     seq_frag_list_tuple,
-                                                                                     target_frag_nplist_tuple,
-                                                                                     type_protein_pt_tuple)
-        # with autocast():
-        if True: # 难道是?
+        encoded_seq = None
 
-            encoded_seq = None
-
-            protein_embeddings = torch.load('5283_esm2_t33_650M_UR50D.pt')
-            emb_pro_list = []
-            for i in id_tuple:
-                emb_pro_list.append(protein_embeddings[i])
-            emb_pro = torch.stack(emb_pro_list, dim=0)
-            emb_pro_ = emb_pro.view((configs.train_settings.batch_size, 1 + configs.supcon.n_pos + configs.supcon.n_neg, -1))
-            projection_head = tools['net'](emb_pro_)
+        protein_embeddings = torch.load('5283_esm2_t33_650M_UR50D.pt')
+        emb_pro_list = []
+        for i in id_tuple:
+            emb_pro_list.append(protein_embeddings[i])
+        emb_pro = torch.stack(emb_pro_list, dim=0)
+        emb_pro_ = emb_pro.view((configs.train_settings.batch_size, 1 + configs.supcon.n_pos + configs.supcon.n_neg, -1))
+        projection_head = tools['net'](emb_pro_)
 
 
-            if configs.supcon.apply and configs.supcon.apply_supcon_loss:  # configs.supcon.apply: # and warm_starting: calculate supcon loss no matter whether warm_starting or not.
-                supcon_loss = tools['loss_function_supcon'](
-                    projection_head,
-                    configs.supcon.temperature,
-                    configs.supcon.n_pos)
-                # weighted_supcon_loss = configs.supcon.weight * supcon_loss
-                # print(f"{global_step} supcon_loss:{weighted_supcon_loss.item()}")
-                print(f"{global_step} supcon_loss:{supcon_loss.item()}")
-                # train_writer.add_scalar('step supcon_loss', weighted_supcon_loss.item(), global_step=global_step)
-                train_writer.add_scalar('step supcon_loss', supcon_loss.item(), global_step=global_step)
-                # weighted_loss_sum += weighted_supcon_loss
-            if configs.supcon.apply is False and warm_starting:
-                raise ValueError("Check configs.supcon.apply and configs.supcon.warm_start")
+        # if configs.supcon.apply and configs.supcon.apply_supcon_loss:  # configs.supcon.apply: # and warm_starting: calculate supcon loss no matter whether warm_starting or not.
+        supcon_loss = tools['loss_function_supcon'](
+            projection_head,
+            configs.supcon.temperature,
+            configs.supcon.n_pos)
 
-            supcon_loss.backward()
-            tools['optimizer'].step()
-            train_loss += supcon_loss.item()
+        print(f"{global_step} supcon_loss:{supcon_loss.item()}")
+        train_writer.add_scalar('step supcon_loss', supcon_loss.item(), global_step=global_step)
+
+        supcon_loss.backward()
+        tools['optimizer'].step()
+        train_loss += supcon_loss.item()
 
         global_step += 1
 
