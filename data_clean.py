@@ -53,6 +53,7 @@ class LocalizationDataset(Dataset):
         print('full_list', self.full_list)
         print('idx of __getitem__', idx)
         if self.apply_supcon and self.mode=="train":
+            exit(0)
             anchor_type = self.full_list[idx]
             anchor = random.choice(self.class_id[anchor_type])
             id, id_frag_list, seq_frag_list, target_frag_list, type_protein = self.samples[anchor]
