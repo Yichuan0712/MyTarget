@@ -481,12 +481,12 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         global global_step
         global_step = 0
         for epoch in range(start_epoch, configs.train_settings.num_epochs + 1):
-            print(epoch)
+            # print(epoch)
             warm_starting = False
-            print(warm_starting)
+            # print(warm_starting)
             if epoch < configs.supcon.warm_start:
-                print('****')
-                print(epoch)
+                # print('****')
+                # print(epoch)
                 # exit(0)
                 warm_starting = True
                 if epoch == 0:
@@ -553,13 +553,13 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         else:
             model_path = os.path.join(tools['checkpoint_path'], f'best_model.pth')
 
-    customlog(logfilepath, f"Loading checkpoint from {model_path}\n")
-    model_checkpoint = torch.load(model_path, map_location='cpu')
-    tools['net'].load_state_dict(model_checkpoint['model_state_dict'])
-    customlog(logfilepath, f"Fold {valid_batch_number} test\n-------------------------------\n")
-    start_time = time()
-    dataloader = tools["test_loader"]
-    evaluate_protein(dataloader, tools)
+    # customlog(logfilepath, f"Loading checkpoint from {model_path}\n")
+    # model_checkpoint = torch.load(model_path, map_location='cpu')
+    # tools['net'].load_state_dict(model_checkpoint['model_state_dict'])
+    # customlog(logfilepath, f"Fold {valid_batch_number} test\n-------------------------------\n")
+    # start_time = time()
+    # dataloader = tools["test_loader"]
+    # evaluate_protein(dataloader, tools)
     train_writer.close()
     valid_writer.close()
     end_time = time()
