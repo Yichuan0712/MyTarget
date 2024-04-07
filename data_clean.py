@@ -88,9 +88,9 @@ class LocalizationDataset(Dataset):
 
     def get_pos_samples(self, anchor_idx):
         anchor_type_protein = self.samples[anchor_idx][4]  # class 0000 0001
-        print(anchor_type_protein, self.samples[anchor_idx][0] )
-        # print()
-        print("*"*16)
+        # print(anchor_type_protein, self.samples[anchor_idx][0] )
+        # # print()
+        # print("*"*16)
         # 找到所有正样本
         all_pos_samples = [sample for sample in self.samples if
                            np.any(np.logical_and(anchor_type_protein == 1, sample[4] == 1))]
@@ -101,8 +101,8 @@ class LocalizationDataset(Dataset):
         for _ in range(self.n_pos):
             chosen_sample = random.choice(all_pos_samples)
             pos_samples.append(chosen_sample)
-            print(chosen_sample[4], chosen_sample[0])
-        print('*'*32)
+            # print(chosen_sample[4], chosen_sample[0])
+        # print('*'*32)
         # exit(0)
         # 此时final_pos_samples包含了你需要的正样本，数量为self.n_pos，可能包含重复
 
@@ -135,8 +135,8 @@ class LocalizationDataset(Dataset):
         for _ in range(self.n_neg):
             chosen_sample = random.choice(all_neg_samples)
             neg_samples.append(chosen_sample)
-            print(chosen_sample[4], chosen_sample[0])
-        print('*' * 32)
+            # print(chosen_sample[4], chosen_sample[0])
+        # print('*' * 32)
         # exit(0)
 
         neg_samples_with_weight = []
