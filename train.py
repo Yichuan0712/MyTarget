@@ -432,7 +432,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
     encoder = prepare_models(configs, logfilepath, curdir_path)
     customlog(logfilepath, "Done initialize model\n")
 
-    optimizer, scheduler = prepare_optimizer(encoder, configs, len(dataloaders_dict["train"]), logfilepath)
+    optimizer, _ = prepare_optimizer(encoder, configs, len(dataloaders_dict["train"]), logfilepath)
     # if configs.optimizer.mode == 'skip':
     #     scheduler = optimizer
     customlog(logfilepath, 'preparing optimizer is done\n')
@@ -466,7 +466,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         'loss_function_pro': torch.nn.BCEWithLogitsLoss(reduction="none"),
         'loss_function_supcon': SupConHardLoss,  # Yichuan
         'checkpoints_every': configs.checkpoints_every,
-        'scheduler': scheduler,
+        # 'scheduler': scheduler,
         'result_path': result_path,
         'checkpoint_path': checkpoint_path,
         'logfilepath': logfilepath,
@@ -564,7 +564,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
     valid_writer.close()
     end_time = time()
 
-    del tools, encoder, dataloaders_dict, optimizer, scheduler
+    del tools, encoder, dataloaders_dict, optimizer
     torch.cuda.empty_cache()
 
 
