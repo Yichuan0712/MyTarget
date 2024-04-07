@@ -433,12 +433,12 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
     customlog(logfilepath, "Done initialize model\n")
 
     optimizer, scheduler = prepare_optimizer(encoder, configs, len(dataloaders_dict["train"]), logfilepath)
-    if configs.optimizer.mode == 'skip':
-        scheduler = optimizer
+    # if configs.optimizer.mode == 'skip':
+    #     scheduler = optimizer
     customlog(logfilepath, 'preparing optimizer is done\n')
-    if args.predict != 1:
-        _, start_epoch = load_checkpoints(configs, optimizer, scheduler, logfilepath, encoder)
-
+    # if args.predict != 1:
+    #     _, start_epoch = load_checkpoints(configs, optimizer, scheduler, logfilepath, encoder)
+    start_epoch = 1
     # w=(torch.ones([9,1,1])*5).to(configs.train_settings.device)
     w = torch.tensor(configs.train_settings.loss_pos_weight, dtype=torch.float32).to(configs.train_settings.device)
 
