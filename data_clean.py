@@ -82,28 +82,6 @@ class LocalizationDataset(Dataset):
         # return id, type_protein
 
     def get_pos_samples(self, anchor_idx):
-        # filtered_samples = [sample for idx, sample in enumerate(self.samples) if idx != anchor_idx] #all candidate exlude itself.
-        # anchor_type_protein = self.samples[anchor_idx][4] #class 0000 0001
-        # pos_samples = [sample for sample in filtered_samples if
-        #                np.any(np.logical_and(anchor_type_protein == 1, sample[4] == 1))]
-        # if len(pos_samples) < self.n_pos:
-        #     # raise ValueError(f"Not enough positive samples for {anchor_type_protein} found: {len(pos_samples)}. Required: {self.n_pos}.")
-        #     samples_to_add = self.n_pos - len(pos_samples)
-        #     for _ in range(samples_to_add):
-        #         pos_samples.append(random.choice(pos_samples))
-        # if len(pos_samples) > self.n_pos:
-        #     pos_samples = random.sample(pos_samples, self.n_pos)
-        #
-        # pos_samples_with_weight = []
-        # for sample in pos_samples:
-        #     labels = np.where(sample[4] == 1)[0]
-        #     weights = [self.class_weights[label] for label in labels]
-        #     sample_weight = np.max(weights)
-        #     sample_with_weight = list(sample) + [sample_weight]
-        #     pos_samples_with_weight.append(sample_with_weight)
-        #
-        # return pos_samples_with_weight  # pos_samples
-        # filtered_samples = [sample for idx, sample in enumerate(self.samples) if idx != anchor_idx] #all candidate exlude itself.
         anchor_type_protein = self.samples[anchor_idx][4]  # class 0000 0001
 
         # 找到所有正样本
@@ -124,8 +102,9 @@ class LocalizationDataset(Dataset):
             labels = np.where(sample[4] == 1)[0]
             weights = [self.class_weights[label] for label in labels]
             sample_weight = np.max(weights)
-            sample_with_weight = list(sample) + [sample_weight]
-            pos_samples_with_weight.append(sample_with_weight)
+            # sample_with_weight = list(sample) + [sample_weight]
+            pos_samples_with_weight.append(sample_weight)
+            sample[4] = torch.from_numpy(sample[4])
 
         return pos_samples_with_weight  # pos_samples
 
@@ -152,8 +131,9 @@ class LocalizationDataset(Dataset):
             labels = np.where(sample[4] == 1)[0]
             weights = [self.class_weights[label] for label in labels]
             sample_weight = np.max(weights)
-            sample_with_weight = list(sample) + [sample_weight]
-            neg_samples_with_weight.append(sample_with_weight)
+            # sample_with_weight = list(sample) + [sample_weight]
+            neg_samples_with_weight.append(sample_weight)
+            sample[4] = torch.from_numpy(sample[4])
 
         return neg_samples_with_weight  # neg_samples
 
