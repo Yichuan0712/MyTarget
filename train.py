@@ -470,7 +470,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         'cutoffs': configs.predict_settings.cutoffs,
         'composition': configs.encoder.composition,
         'max_len': configs.encoder.max_len,
-        'tokenizer': tokenizer,
+        # 'tokenizer': tokenizer,
         'prm4prmpro': configs.encoder.prm4prmpro,
         'net': encoder,
         # 'net': LayerNormNet2(configs),
