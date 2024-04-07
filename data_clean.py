@@ -88,9 +88,9 @@ class LocalizationDataset(Dataset):
 
     def get_pos_samples(self, anchor_idx):
         anchor_type_protein = self.samples[anchor_idx][4]  # class 0000 0001
-        print(anchor_type_protein, anchor_idx)
+        print(anchor_type_protein, self.samples[anchor_idx][0] )
         # print()
-        # print("*"*16)
+        print("*"*16)
         # 找到所有正样本
         all_pos_samples = [sample for sample in self.samples if
                            np.any(np.logical_and(anchor_type_protein == 1, sample[4] == 1))]
