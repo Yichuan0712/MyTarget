@@ -80,8 +80,8 @@ class LocalizationDataset(Dataset):
         pos_neg = None
         if self.apply_supcon and self.mode=="train":
             # Even when not in warm starting, the following code is still executed, although its results are not used
-            pos_samples = self.get_pos_samples(anchor)
-            neg_samples = self.get_neg_samples(anchor)
+            pos_samples = self.get_pos_samples(idx)
+            neg_samples = self.get_neg_samples(idx)
             pos_neg = [pos_samples, neg_samples]
         return id, id_frag_list, seq_frag_list, target_frag_list, type_protein, sample_weight, pos_neg
         # return id, type_protein
