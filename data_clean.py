@@ -12,7 +12,7 @@ from utils import *
 
 
 class LocalizationDataset(Dataset):
-    def __init__(self, samples, configs,mode="train"):
+    def __init__(self, samples, configs, mode="train"):
         # self.label_to_index = {"Other": 0, "SP": 1, "MT": 2, "CH": 3, "TH": 4}
         # self.index_to_label = {0: "Other", 1: "SP", 2: "MT", 3: "CH", 4: "TH"}
         # self.transform = transform
@@ -20,9 +20,9 @@ class LocalizationDataset(Dataset):
         # self.cs_transform = cs_transform
         self.samples = samples
         self.n = configs.encoder.num_classes
-        print(self.count_samples_by_class(self.n, self.samples))
+        # print(self.count_samples_by_class(self.n, self.samples))
         self.class_weights = calculate_class_weights(self.count_samples_by_class(self.n, self.samples))
-        print(self.class_weights)
+        # print(self.class_weights)
         self.apply_supcon = configs.supcon.apply
         self.mode = mode
         if self.apply_supcon:
@@ -82,17 +82,42 @@ class LocalizationDataset(Dataset):
         # return id, type_protein
 
     def get_pos_samples(self, anchor_idx):
-        filtered_samples = [sample for idx, sample in enumerate(self.samples) if idx != anchor_idx] #all candidate exlude itself.
-        anchor_type_protein = self.samples[anchor_idx][4] #class 0000 0001
-        pos_samples = [sample for sample in filtered_samples if
-                       np.any(np.logical_and(anchor_type_protein == 1, sample[4] == 1))]
-        if len(pos_samples) < self.n_pos:
-            # raise ValueError(f"Not enough positive samples for {anchor_type_protein} found: {len(pos_samples)}. Required: {self.n_pos}.")
-            samples_to_add = self.n_pos - len(pos_samples)
-            for _ in range(samples_to_add):
-                pos_samples.append(random.choice(pos_samples))
-        if len(pos_samples) > self.n_pos:
-            pos_samples = random.sample(pos_samples, self.n_pos)
+        # filtered_samples = [sample for idx, sample in enumerate(self.samples) if idx != anchor_idx] #all candidate exlude itself.
+        # anchor_type_protein = self.samples[anchor_idx][4] #class 0000 0001
+        # pos_samples = [sample for sample in filtered_samples if
+        #                np.any(np.logical_and(anchor_type_protein == 1, sample[4] == 1))]
+        # if len(pos_samples) < self.n_pos:
+        #     # raise ValueError(f"Not enough positive samples for {anchor_type_protein} found: {len(pos_samples)}. Required: {self.n_pos}.")
+        #     samples_to_add = self.n_pos - len(pos_samples)
+        #     for _ in range(samples_to_add):
+        #         pos_samples.append(random.choice(pos_samples))
+        # if len(pos_samples) > self.n_pos:
+        #     pos_samples = random.sample(pos_samples, self.n_pos)
+        #
+        # pos_samples_with_weight = []
+        # for sample in pos_samples:
+        #     labels = np.where(sample[4] == 1)[0]
+        #     weights = [self.class_weights[label] for label in labels]
+        #     sample_weight = np.max(weights)
+        #     sample_with_weight = list(sample) + [sample_weight]
+        #     pos_samples_with_weight.append(sample_with_weight)
+        #
+        # return pos_samples_with_weight  # pos_samples
+        # filtered_samples = [sample for idx, sample in enumerate(self.samples) if idx != anchor_idx] #all candidate exlude itself.
+        anchor_type_protein = self.samples[anchor_idx][4]  # class 0000 0001
+
+        # 找到所有正样本
+        all_pos_samples = [sample for sample in self.samples if
+                           np.any(np.logical_and(anchor_type_protein == 1, sample[4] == 1))]
+
+        pos_samples = []
+
+        # 直接选择n_pos个正样本，允许重复
+        for _ in range(self.n_pos):
+            chosen_sample = random.choice(all_pos_samples)
+            pos_samples.append(chosen_sample)
+
+        # 此时final_pos_samples包含了你需要的正样本，数量为self.n_pos，可能包含重复
 
         pos_samples_with_weight = []
         for sample in pos_samples:
