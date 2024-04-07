@@ -50,8 +50,8 @@ class LocalizationDataset(Dataset):
            return len(self.samples)
         
     def __getitem__(self, idx):
-        # print('full_list', self.full_list)
-        # print('idx of __getitem__', idx)
+        print('full_list', self.full_list)
+        print('idx of __getitem__', idx)
         if self.apply_supcon and self.mode=="train":
             # exit(0)
             anchor_type = self.full_list[idx]
