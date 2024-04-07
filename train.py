@@ -488,13 +488,6 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
                 if epoch == 0:
                     print('== Warm Start Began    ==')
                     customlog(logfilepath, f"== Warm Start Began ==\n")
-
-            if epoch == configs.supcon.warm_start:
-                best_valid_loss = np.inf  # reset best_valid_loss when warmend ends
-                warm_starting = False
-                print('== Warm Start Finished ==')
-                customlog(logfilepath, f"== Warm Start Finished ==\n")
-
             tools['epoch'] = epoch
             if global_step % 100 == 0:
                 print(f"Fold {valid_batch_number} Epoch {epoch}\n-------------------------------")
