@@ -487,7 +487,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
             if epoch < configs.supcon.warm_start:
                 print('****')
                 print(epoch)
-                exit(0)
+                # exit(0)
                 warm_starting = True
                 if epoch == 0:
                     print('== Warm Start Began    ==')
