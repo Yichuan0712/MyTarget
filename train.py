@@ -481,6 +481,7 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
         global global_step
         global_step = 0
         for epoch in range(start_epoch, configs.train_settings.num_epochs + 1):
+            print(epoch)
             warm_starting = False
             print(warm_starting)
             if epoch < configs.supcon.warm_start:
