@@ -127,7 +127,7 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
         emb_pro_ = emb_pro.view((configs.train_settings.batch_size, 1 + configs.supcon.n_pos + configs.supcon.n_neg, -1))
         projection_head = encoder(emb_pro_)
 
-        supcon_loss = tools['loss_function_supcon'](projection_head, configs.supcon.temperature, configs.supcon.n_neg)
+        supcon_loss = tools['loss_function_supcon'](projection_head, configs.supcon.temperature, configs.supcon.n_pos)
         print(f"{global_step} supcon_loss:{supcon_loss.item()}")
 
         supcon_loss.backward()
