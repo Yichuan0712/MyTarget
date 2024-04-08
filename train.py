@@ -90,7 +90,7 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
             flag_batch_extension = True
             pos_transformed = [[[] for _ in range(6)] for _ in range(configs.supcon.n_pos)]
             neg_transformed = [[[] for _ in range(6)] for _ in range(configs.supcon.n_neg)]
-            print(len(b_size))
+            print(b_size)
             exit(0)
             for i in range(b_size):
                 # print("pos_neg pos")
