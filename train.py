@@ -91,7 +91,7 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
             pos_transformed = [[[] for _ in range(6)] for _ in range(configs.supcon.n_pos)]
             neg_transformed = [[[] for _ in range(6)] for _ in range(configs.supcon.n_neg)]
             # print(b_size)
-            for one_in_a_batch in b_size:
+            for one_in_a_batch in range(b_size):
                 # pos_neg[one_in_a_batch][0]
                 for one_of_pos in range(configs.supcon.n_pos):
                     # pos_neg[one_in_a_batch][0][one_of_pos]
@@ -101,7 +101,7 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
                     target_frag_nplist_tuple += tuple(pos_neg[one_in_a_batch][0][one_of_pos][3])
                     type_protein_pt_tuple += tuple(torch.from_numpy(arr) for arr in pos_neg[one_in_a_batch][0][one_of_pos][4])
                     sample_weight_tuple += tuple(pos_neg[one_in_a_batch][0][one_of_pos][5])
-            for one_in_a_batch in b_size:
+            for one_in_a_batch in range(b_size):
                 # pos_neg[one_in_a_batch][0]
                 for one_of_neg in range(configs.supcon.neg):
                     # pos_neg[one_in_a_batch][0][one_of_pos]
