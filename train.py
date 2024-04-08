@@ -111,8 +111,8 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
                     id_frag_list_tuple += tuple(pos_neg[one_in_a_batch][1][one_of_neg][1])
                     seq_frag_list_tuple += tuple(pos_neg[one_in_a_batch][1][one_of_neg][2])
                     target_frag_nplist_tuple += tuple(pos_neg[one_in_a_batch][1][one_of_neg][3])
-                    type_protein_pt_tuple += tuple(torch.from_numpy(arr) for arr in pos_neg[one_in_a_batch][1][one_of_neg][4])
-                    sample_weight_tuple += tuple(pos_neg[one_in_a_batch][1][one_of_neg][5])
+                    type_protein_pt_tuple += tuple(pos_neg[one_in_a_batch][1][one_of_neg][4])
+                    sample_weight_tuple += (pos_neg[one_in_a_batch][1][one_of_neg][5],)
             # exit(0)
             # for i in range(b_size):
             #     # print("pos_neg pos")
