@@ -96,6 +96,7 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
                 for one_of_pos in range(configs.supcon.n_pos):
                     # pos_neg[one_in_a_batch][0][one_of_pos]
                     # print(len(pos_neg[one_in_a_batch][0][one_of_pos]))
+                    print(pos_neg[one_in_a_batch][0][one_of_pos][0])
                     id_tuple += tuple(pos_neg[one_in_a_batch][0][one_of_pos][0])
                     id_frag_list_tuple += tuple(pos_neg[one_in_a_batch][0][one_of_pos][1])
                     seq_frag_list_tuple += tuple(pos_neg[one_in_a_batch][0][one_of_pos][2])
