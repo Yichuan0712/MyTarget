@@ -126,7 +126,19 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
         for i in id_tuple:
             emb_pro_list.append(protein_embeddings[i])
         emb_pro = torch.stack(emb_pro_list, dim=0)
-        emb_pro_ = emb_pro.view((configs.train_settings.batch_size, 1 + configs.supcon.n_pos + configs.supcon.n_neg, -1))
+        # emb_pro_ = emb_pro.view((configs.train_settings.batch_size, 1 + configs.supcon.n_pos + configs.supcon.n_neg, -1))
+        n_batch = int(emb_pro.shape[0] / (1 + configs.supcon.n_pos + configs.supcon.n_neg))
+        bch_anchors, bch_positives, bch_negatives = torch.split(emb_pro,
+                                                                [n_batch, n_batch * configs.supcon.n_pos, n_batch * configs.supcon.n_neg],
+                                                                dim=0)
+        emb_pro_ = []
+        for i in range(n_batch):
+            anchor = bch_anchors[i].unsqueeze(0)
+            positive = bch_positives[(i * configs.supcon.n_pos):(i * configs.supcon.n_pos + configs.supcon.n_pos)]
+            negative = bch_negatives[(i * configs.supcon.n_neg):(i * configs.supcon.n_neg + configs.supcon.n_neg)]
+            triple = torch.cat((anchor, positive, negative), dim=0)
+            emb_pro_.append(triple)
+        emb_pro_ = torch.stack(emb_pro_, dim=0)
         projection_head = encoder(emb_pro_)
 
         supcon_loss = tools['loss_function_supcon'](projection_head, configs.supcon.temperature, configs.supcon.n_pos)
