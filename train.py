@@ -105,7 +105,7 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
 
             for one_in_a_batch in range(b_size):
                 # pos_neg[one_in_a_batch][1]
-                for one_of_neg in range(configs.supcon.neg):
+                for one_of_neg in range(configs.supcon.n_neg):
                     # pos_neg[one_in_a_batch][1][one_of_pos]
                     id_tuple += tuple(pos_neg[one_in_a_batch][1][one_of_neg][0])
                     id_frag_list_tuple += tuple(pos_neg[one_in_a_batch][1][one_of_neg][1])
