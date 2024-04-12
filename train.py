@@ -513,6 +513,8 @@ def main(config_dict, args, valid_batch_number, test_batch_number):
             tools['epoch'] = epoch
             if global_step % 100 == 0:
                 print(f"Fold {valid_batch_number} Epoch {epoch}\n-------------------------------")
+                with open('training_log.txt', 'a') as log_file:
+                    log_file.write(f"Fold {valid_batch_number} Epoch {epoch}\n-------------------------------")
 
             train_loss = train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer)
             train_writer.add_scalar('epoch loss', train_loss, global_step=epoch)
