@@ -163,7 +163,8 @@ def train_loop(encoder, tools, configs, warm_starting, train_writer, optimizer):
 
         supcon_loss = tools['loss_function_supcon'](projection_head, configs.supcon.temperature, configs.supcon.n_pos)
         print(f"{global_step} supcon_loss:{supcon_loss.item()}")
-
+        with open('training_log.txt', 'a') as log_file:
+            log_file.write(f"{global_step} supcon_loss:{supcon_loss.item()}\n")
         supcon_loss.backward()
         optimizer.step()
         train_loss += supcon_loss.item()
